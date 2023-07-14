@@ -1,0 +1,24 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model logtranscimb {
+  id_log       Int                    @id @default(autoincrement())
+  income_date  DateTime               @default(now()) @db.DateTime(0)
+  log_income   Json?                  @db.Json
+  trans_flag   e_trans_flag
+  coop_key     String                 @db.VarChar(15)
+  sigma_key    String?                @db.Text
+  log_response Json?                  @db.Json
+}
+
+enum e_trans_flag {
+  DESPOSIT @map("1")
+  WITHDRAW @map("-1")
+}
+

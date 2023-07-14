@@ -1,0 +1,29 @@
+{
+  "name": "cimb_encrypt_v2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node ./bin/www",
+    "dev": "nodemon ./bin/www"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^5.0.0",
+    "axios": "^1.4.0",
+    "crypto-js": "^4.1.1",
+    "express": "^4.18.2",
+    "module-alias": "^2.2.3",
+    "moment": "^2.29.4",
+    "node-forge": "^0.9.1",
+    "prisma": "^5.0.0",
+    "sjcl": "^1.0.8",
+    "uuidv4": "^6.2.13"
+  },
+  "_moduleAliases": {
+    "@API": "./API/*",
+    "@UTIL": "./util/*"
+  }
+}
