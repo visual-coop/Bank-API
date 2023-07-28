@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+  output = "../../node_modules/@prisma-gateway/client"
+}
+
+datasource db_coop {
+  provider = "mysql"
+  url      = env("DATABASE_URL_GATEWAY")
+}
+
+// prisma generate --schema=./prisma/gateway/schema.prisma
+
+model coop_provide_cimb {
+  public_key         String   @db_coop.Text
+  customer_identity  String   @db_coop.VarChar(32)
+  //passcode           String   @db_coop.VarChar(64)
+  //grant_type         String   @default("password") @db_coop.VarChar(50)
+  client_secret      String   @db_coop.VarChar(64)
+  client_ref_id      String   @db_coop.VarChar(64)
+  client_id          String   @db_coop.VarChar(32)
+  //exponent           String   @db_coop.VarChar(64)
+  channel_id         String   @db_coop.VarChar(64)
+  enc_iv64           String   @db_coop.VarChar(64)
+  enc_key64          String   @db_coop.VarChar(64)
+  opay_encrypt_key64 String?  @db_coop.VarChar(64)
+  opay_encrypt_iv64  String?  @db_coop.VarChar(32)
+  coop_key           String   @id @db_coop.VarChar(5)
+  //tax_id             String?  @db_coop.VarChar(15)
+  //suffix_crossbank   String?  @db_coop.VarChar(2)
+  //biller_id          String?  @db_coop.VarChar(20)
+  //create_date        DateTime @default(now()) @db_coop.DateTime(0)
+  //update_date        DateTime @default(now()) @db_coop.DateTime(0)
+  coop_name          String?  @db_coop.Text
+  secret_key         String   @db_coop.VarChar(64)
+  request_id         String   @db_coop.VarChar(64)
+  x_apigw_api_id     String   @db_coop.VarChar(64)
+}
+

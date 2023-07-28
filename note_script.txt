@@ -1,0 +1,7 @@
+prisma db pull --schema=./prisma/schema_gateway.prisma
+
+prisma generate --schema=./prisma/coop/schema.prisma
+
+prisma generate --schema=./prisma/gateway/schema.prisma
+
+pm2 start index.js --name BANK_API --cron-restart="0 0 * * *" --watch

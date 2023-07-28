@@ -1,9 +1,7 @@
 import forge from 'node-forge'
 import CryptoJS from 'crypto-js'
-import axios from 'axios'
 import moment from 'moment'
-import { PrismaClient, e_trans_flag } from '@prisma/client'
-import { v4 as uuid } from 'uuid'
+import { amtDecimal } from '#libs/Functions'
 
 // ===== Encrypt Decrypt Algorithm =====
 
@@ -17,10 +15,6 @@ export const generateAESKey = () => {
 
 export const getIV = (str) => {
     return str.substr(0, 16)
-}
-
-export const genGUID = () => {
-    return uuid()
 }
 
 export const getMessageSecretKey = (messageDecrypt) => {
@@ -103,7 +97,6 @@ export const BodyDecrypt = (key64, iv64, body) => {
 
 export const buildOPAYRequest = (body) => {
     try {
-
         if (!!!body) throw "Payload not complate"
 
         const transaction_timestance = moment().format("YYYYMMDDHHmmssSSS")
@@ -114,37 +107,42 @@ export const buildOPAYRequest = (body) => {
 
         let ProxyType = body.trans_type, ToBankID = ''
 
-        if (!body.trans_type) ProxyType = 'NATID'
+        if (!body.trans_type || body.trans_type === '') ProxyType = 'NATID'
         if (body.trans_type === 'ACCNO') ToBankID = body.bank_id
 
         let ClientTransactionNo
         if (body.routePath === '/getStatusV2CIMB' || body.routePath === '/confirmFunsTransferCIMB') ClientTransactionNo = body.ClientTransactionNo
         else ClientTransactionNo = `CORP${transaction_timestance}`
 
-        let myjson = {
-            "ClientTransactionNo": `${ClientTransactionNo}`,
-            "ClientTransactionTimestamp": transaction_timestance,
-            "ProxyType": ProxyType,
-            "ProxyID": body.destination,
-            "ToBankID": ToBankID,
-            "BeneficiaryName": "Piti Chujai",
-            "Amount": body.amt_transfer,
-            "SenderName": "Mr. GANG WANG",
-            "SenderID": body.card_person,
-            "SenderAddress": "TH|67-6 ro",
-            "SenderDateOfBirth": "20000705",
-            "SenderPlaceOfBirth": "Test Place",
-            "SenderReference": "TX0000589672",
-            "SenderIDOther": "M35772699",
-            "AdditionalInfo": {
-                "SenderInfo": {
-                    "SenderIDType": "NIDN",
-                    "BirthPlace": "TH",
-                    "CountryCd": "TH",
-                    "ProvinceCd": "Bangkok"
+
+        let myjson
+        if (body.routePath === '/confirmFunsTransferCIMB' || body.routePath === '/inquiryAccountCIMB') {
+            myjson = {
+                "ClientTransactionNo": `${ClientTransactionNo}`,
+                "ClientTransactionTimestamp": transaction_timestance,
+                "ProxyType": ProxyType,
+                "ProxyID": body.destination,
+                "ToBankID": ToBankID,
+                "BeneficiaryName": "Piti Chujai",
+                "Amount": amtDecimal(body.amt_transfer),
+                "SenderName": "Mr. GANG WANG",
+                "SenderID": body.card_person,
+                "SenderAddress": "TH|67-6 ro",
+                "SenderDateOfBirth": "20000705",
+                "SenderPlaceOfBirth": "Test Place",
+                "SenderReference": "TX0000589672",
+                "SenderIDOther": "M35772699",
+                "AdditionalInfo": {
+                    "SenderInfo": {
+                        "SenderIDType": "NIDN",
+                        "BirthPlace": "TH",
+                        "CountryCd": "TH",
+                        "ProvinceCd": "Bangkok"
+                    }
                 }
             }
         }
+
 
         if (body.routePath === '/getStatusV2CIMB') {
             myjson = {
@@ -172,56 +170,6 @@ export const buildOPAYRequest = (body) => {
 
     } catch (err) {
         console.log(`buildOPAYRequest error =>`, err)
-    }
-}
-
-// ===== Request API =====
-
-export const RequestFunction = async (isToken = false, url, headers, data) => {
-    if (isToken) headers.Authorization = `${headers.Authorization}`
-    return await axios.post(url, {
-        ...data
-    }, { headers })
-        .then((res) => res)
-        .catch((error) => {
-            if (!!error.response) {
-                console.log(error.response.data)
-                throw (handleError(error.response.status))
-            } else {
-                console.log(error)
-                throw (handleError('etc'))
-            }
-        })
-}
-
-// ===== Hendle Error =====
-
-export const handleError = (error) => {
-    if (error === 400) return 'Bad Request'
-    else if (error === 401) return 'Unauthorized'
-    else if (error === 403) return 'Forbidden'
-    else return 'Something went wrong, Please contact the developer'
-}
-
-// ===== Query statucture (Prisma) =====
-
-const prisma = new PrismaClient()
-
-export const SET_LOG = async (payload) => {
-    try {
-        if (!!payload) {
-            return await prisma.logtranscimb.create({
-                data: {
-                    log_income: payload.log_income,
-                    trans_flag: payload.trans_flag === '1' ? e_trans_flag.DESPOSIT : e_trans_flag.WITHDRAW,
-                    coop_key: payload.coop_key,
-                    sigma_key: uuid(),
-                    log_response: payload.log_response
-                }
-            })
-        } else throw "Payload not complete"
-    } catch (e) {
-        return `(Prisma) Error : ${e}`
     }
 }
 

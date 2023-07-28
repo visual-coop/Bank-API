@@ -1,0 +1,21 @@
+{
+	"folders": [
+		{
+			"path": "../coopdirect-service"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "../../cimb_encrypt"
+		},
+		{
+			"path": "../../Mobile/service-igat"
+		}
+	],
+	"settings": {
+		"javascript.preferGoToSourceDefinition": true,
+		"javascript.suggest.autoImports": false,
+		"javascript.referencesCodeLens.enabled": true
+	}
+}

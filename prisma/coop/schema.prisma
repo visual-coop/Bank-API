@@ -1,0 +1,25 @@
+generator client {
+  provider = "prisma-client-js"
+  output = "../../node_modules/@prisma-coop/client"
+}
+
+datasource db_coop {
+  provider = "mysql"
+  url      = env("DATABASE_URL_COOP")
+}
+
+model logtranscimb {
+  id_log       Int                    @id @default(autoincrement())
+  income_date  DateTime               @default(now()) @db_coop.DateTime(0)
+  log_income   Json?                  @db_coop.Json
+  trans_flag   e_trans_flag
+  coop_key     String                 @db_coop.VarChar(15)
+  sigma_key    String?                @db_coop.Text
+  log_response Json?                  @db_coop.Json
+}
+
+enum e_trans_flag {
+  DESPOSIT @map("1")
+  WITHDRAW @map("-1")
+}
+

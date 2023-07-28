@@ -1,0 +1,10 @@
+generator client {
+  provider = "prisma-client-js"
+  output = "../../node_modules/@prisma-gateway-mongodb/client"
+}
+
+datasource db_gateway {
+  provider = "mysql"
+  url      = env("DATABASE_URL_GATEWAY_MONGODB")
+}
+
