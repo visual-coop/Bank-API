@@ -1,0 +1,8 @@
+{
+    "pea_path" : "https://proxy.thaicoop.co/PEACOOP",
+    "pea_cron_status" : true,
+    "igat_path" : "http://43.229.79.117/mobile/service-igat",
+    "igat_cron_status" : false,
+    "mhs_path" : "https://proxy.thaicoop.co/MHSCOOP",
+    "mhs_cron_status" : false
+}

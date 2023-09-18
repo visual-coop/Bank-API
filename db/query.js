@@ -24,6 +24,20 @@ export const COOP_DB = {
             return `[Prisma] [DB : ${this.DB_NAME}] Error : ${e}`
         }
     },
+    async SET_BUUFER_LOG (payload) {
+        try {
+            if (!!payload) {
+                return await this.DB.buffer_history.create({
+                    data: {
+                        body : payload,
+                        sigma_key : payload.sigma_key
+                    }
+                })
+            } else throw "Payload not complete"
+        } catch (e) {
+            return `[Prisma] [DB : ${this.DB_NAME}] Error : ${e}`
+        }
+    },
     async GET_LOGS (body) {
         try {
             const result = await this.DB.$queryRaw`SELECT  
@@ -65,6 +79,36 @@ export const GATEWAY_DB_CIMB = {
             return await this.DB.coop_provide_cimb.findMany()
         } catch (e) {
             return `[Prisma] [DB : ${this.DB_NAME}] Error : ${e}`
+        }
+    },
+    async SET_LOG (payload) {
+        try {
+            const VALUES = {
+                log_income : JSON.stringify(payload.log_income),
+                trans_flag : payload.trans_flag,
+                coop_key : payload.coop_key,
+                sigma_key : payload.sigma_key,
+                log_response : JSON.stringify(payload.log_response)
+            }
+
+            const result = await this.DB.$queryRaw`INSERT INTO logtranscimb
+            (
+                log_income,
+                trans_flag,
+                coop_key,
+                sigma_key,
+                log_response
+            ) VALUES (
+                ${VALUES.log_income},
+                ${VALUES.trans_flag},
+                ${VALUES.coop_key},
+                ${VALUES.sigma_key},
+                ${VALUES.log_response}
+            )
+            `
+            return result
+        } catch (error) {
+            
         }
     }
 }

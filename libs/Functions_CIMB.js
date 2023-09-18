@@ -2,6 +2,7 @@ import forge from 'node-forge'
 import CryptoJS from 'crypto-js'
 import moment from 'moment'
 import { amtDecimal } from '#libs/Functions'
+import configs from '#constants/configs'
 
 // ===== Encrypt Decrypt Algorithm =====
 
@@ -42,7 +43,7 @@ export const RSApublicEncrypt = (publicKey, message) => {
             mgf1: {
                 md: forge.md.sha256.create()
             }
-        });
+        })
         return forge.util.encode64(encrypted)
     } catch (e) {
         throw e
@@ -76,6 +77,7 @@ export const AESdecrypt = (key, iv, cipher) => {
 }
 
 export const BodyDecrypt = (key64, iv64, body) => {
+
     const mgate_key64 = CryptoJS.enc.Base64.parse(key64)
     const mgate_iv64 = CryptoJS.enc.Base64.parse(iv64)
     try {
@@ -102,18 +104,26 @@ export const buildOPAYRequest = (body) => {
         const transaction_timestance = moment().format("YYYYMMDDHHmmssSSS")
         const mgate_key64 = CryptoJS.enc.Base64.parse(body.opay_encrypt_key64)
         const mgate_iv64 = CryptoJS.enc.Base64.parse(body.opay_encrypt_iv64)
-        const words = CryptoJS.enc.Utf8.parse(body.channel_id)
-        const mgate_channel = CryptoJS.enc.Base64.stringify(words)
+        const mgate_channel = body.bu_encode
 
         let ProxyType = body.trans_type, ToBankID = ''
 
         if (!body.trans_type || body.trans_type === '') ProxyType = 'NATID'
         if (body.trans_type === 'ACCNO') ToBankID = body.bank_id
 
-        let ClientTransactionNo
-        if (body.routePath === '/getStatusV2CIMB' || body.routePath === '/confirmFunsTransferCIMB') ClientTransactionNo = body.ClientTransactionNo
-        else ClientTransactionNo = `CORP${transaction_timestance}`
-
+        let ClientTransactionNo, BeneficiaryName = 'INQUIRY', SenderReference = 'INQUIRY'
+        if (body.routePath === '/getStatusV2CIMB' || body.routePath === '/confirmFunsTransferCIMB') {
+            ClientTransactionNo = body.ClientTransactionNo
+            if (body.routePath === '/confirmFunsTransferCIMB' && configs.MODE === 'PROD') {
+                BeneficiaryName = body.Beneficiary_Name
+                SenderReference = body.SenderReference
+            } else {
+                // ? UAT
+                BeneficiaryName = "Deverloper"
+                SenderReference = "UAT123456"
+            }
+        }
+        else ClientTransactionNo = `COOP${transaction_timestance}`
 
         let myjson
         if (body.routePath === '/confirmFunsTransferCIMB' || body.routePath === '/inquiryAccountCIMB') {
@@ -123,15 +133,15 @@ export const buildOPAYRequest = (body) => {
                 "ProxyType": ProxyType,
                 "ProxyID": body.destination,
                 "ToBankID": ToBankID,
-                "BeneficiaryName": "Piti Chujai",
+                "BeneficiaryName": BeneficiaryName,
                 "Amount": amtDecimal(body.amt_transfer),
-                "SenderName": "Mr. GANG WANG",
-                "SenderID": body.card_person,
-                "SenderAddress": "TH|67-6 ro",
-                "SenderDateOfBirth": "20000705",
-                "SenderPlaceOfBirth": "Test Place",
-                "SenderReference": "TX0000589672",
-                "SenderIDOther": "M35772699",
+                "SenderName": body.SenderName,
+                "SenderID": body.card_person ?? '',
+                //"SenderAddress": "TH|67-6 ro",
+                //"SenderDateOfBirth": "20000705",
+                //"SenderPlaceOfBirth": "Test Place",
+                "SenderReference": SenderReference,
+                //"SenderIDOther": "M35772699",
                 "AdditionalInfo": {
                     "SenderInfo": {
                         "SenderIDType": "NIDN",
@@ -142,7 +152,6 @@ export const buildOPAYRequest = (body) => {
                 }
             }
         }
-
 
         if (body.routePath === '/getStatusV2CIMB') {
             myjson = {

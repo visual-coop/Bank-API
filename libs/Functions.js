@@ -5,8 +5,24 @@ import configs from '#constants/configs'
 
 // ===== Util Functions =====
 
-export const genGUID = () => {
+export const c_time = () => {
+    return moment().format('YYYY-MM-DD HH:mm:ss')
+}
+
+export const gen_sigma_key = () => {
     return uuid()
+}
+
+export const genGUID = () => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    let result = ''
+
+    for (let i = 0; i < 64; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length)
+        result += characters.charAt(randomIndex)
+    }
+
+    return result
 }
 
 export const formatMysqlDate = (date) => {
@@ -50,43 +66,64 @@ export const pad_amt = (value) => {
     return value_splited[0]
 }
 
-export const bank_api_path = async () => {
+export const bank_api_path_ = async () => {
     return (await RequestFunction.get(false, configs.BANK_API_PATH, null, null)).data
 }
 
-  
+export const bank_api_path = async () => {
+    const urls = (await RequestFunction.get(false, configs.BANK_API_PATH, null, null)).data,result = {}
+    if (configs.MODE === 'PROD') {
+        for (const key of configs.BANK_API_PATH_SELECT) {
+            if (urls.hasOwnProperty(key)) {
+                result[key] = urls[key];
+            }
+        }
+    } else {
+        for (const key of configs.BANK_API_PATH_SELECT) {
+            if (urls.hasOwnProperty(key)) {
+                result[key] = urls[`${key}_UAT`];
+            }
+        }
+    }
+    return result
+}
+
 // ===== Request API =====
 
 export const RequestFunction = {
-    async get(isToken = false, url, headers, data) {
+    async get(isToken = false, url, headers, data, timeout = null, showErr = true) {
         if (isToken) headers.Authorization = `${headers.Authorization}`
         return await axios.get(url, {
             ...data
-        }, { headers })
+        }, { headers, timeout: timeout })
             .then((res) => res)
             .catch((error) => {
-                if (!!error.response) {
-                    console.log(error.response.data)
-                    throw (handleError(error.response.status))
-                } else {
-                    console.log(error)
-                    throw (handleError('etc'))
+                if (showErr) {
+                    if (!!error.response) {
+                        console.log(error.response.data)
+                        throw (handleError(error.response.status))
+                    } else {
+                        console.log(error)
+                        throw (handleError('etc'))
+                    }
                 }
             })
     },
-    async post(isToken = false, url, headers, data) {
+    async post(isToken = false, url, headers, data, timeout = null, showErr = true) {
         if (isToken) headers.Authorization = `${headers.Authorization}`
         return await axios.post(url, {
             ...data
-        }, { headers })
+        }, { headers, timeout: timeout })
             .then((res) => res)
             .catch((error) => {
                 if (!!error.response) {
-                    console.log(error.response.data)
+                    if (showErr) console.log(error.response.data)
+
                     throw (handleError(error.response.status))
                 } else {
-                    console.log(error)
-                    throw (handleError('etc'))
+                    if (showErr) console.log(error)
+
+                    throw (handleError(408))
                 }
             })
     }
@@ -99,6 +136,7 @@ export const handleError = (error) => {
     if (error === 400) return 'Bad Request'
     else if (error === 401) return 'Unauthorized'
     else if (error === 403) return 'Forbidden'
+    else if (error === 408) return 'Request Timeout'
     else return 'Something went wrong, Please contact the developer'
 }
 

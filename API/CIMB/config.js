@@ -1,6 +1,6 @@
 const header = {
     bank_name : "CIMB",
-    bank_code : "006"
+    bank_code : "999"
 }
 
 export const config_cimb_v1 = {

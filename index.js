@@ -4,6 +4,7 @@ import CIMB__api__v2 from '#API/CIMB/v2/main'
 import KTB__api__v1 from '#API/KTB/v1/main'
 import { getDirName } from '#libs/helper'
 import { Startup_Config as radis } from '#cache/redis'
+import configs from '#constants/configs'
 
 // INIT
 const PORT = process.env.PORT || 10003
@@ -21,5 +22,6 @@ router.get('*', (req, res) => {
 router.listen(PORT, async () => {
     console.log("[API] Server Listening on PORT =>", PORT)
     await radis()
+    console.log(`[Mode] ${configs.MODE}`)
 })
 

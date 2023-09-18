@@ -1,21 +1,52 @@
 import { createClient } from 'redis'
+import moment from 'moment'
 import { GATEWAY_DB_CIMB } from '#db/query'
 import { config_cimb_v2 } from '#API/CIMB/config'
+import { COOP_DB } from '#db/query'
+import configs from '#constants/configs'
 
-const Client = createClient()
+const Client = createClient({ ...configs.redis })
 
 Client.on('error', err => console.log('Redis Client Error', err))
 
 export const Startup_Config = async () => {
     await Client.connect()
     if (Client.isOpen) {
+        Client.configSet("notify-keyspace-events", "Ex")
         console.log("[Redis] Client Listening on PORT =>", 6379)
         await Client.set('INIT_CONFIGS:CIMB', JSON.stringify(await GATEWAY_DB_CIMB.GET_INIT_TO_CACHE()))
+        const coops = ['PEA', 'IGAT']
+        coops.forEach(async (coop) => await Client.set(`CRON_${coop}:STATUS`, '0'))
+        // await Client.setEx("test", 10 , "1")
+        // await Client.set('test_ex','2')
+    }
+    const sub = Client.duplicate()
+    await sub.connect()
+
+    sub.subscribe("__keyevent@0__:expired", async (key) => {
+        const payload = await Client.get(`${key}:EX`)
+        await COOP_DB.SET_BUUFER_LOG(JSON.parse(payload))
+        console.log('Del =>', key)
+        await Client.del(`${key}:EX`)
+    })
+}
+
+export const cron_status_actions = {
+    async GET(coop_name) {
+        return await Client.get(`CRON_${coop_name.toUpperCase()}:STATUS`)
+    },
+    async SET(coop_name, processing) {
+        await Client.set(`CRON_${coop_name.toUpperCase()}:STATUS`, processing)
+        return true
     }
 }
 
 export const get_init_config = async (bank) => {
     return await Client.get(`INIT_CONFIGS:${bank}`)
+}
+
+export const BUFFER_QUERY = async (query) => {
+    return await Client.keys(`*${query}*`)
 }
 
 // ===== CIMB ====== //
@@ -41,6 +72,53 @@ export const CIMB_TOKEN = {
     },
     async DEL(uuid) {
         await Client.del(`${this.type}:${config_cimb_v2.bank_name}:${uuid}`)
+    }
+}
+
+// ================= //
+
+// ===== KTB ====== //
+
+export const KTB_BINDACC_BUFFER = {
+    type: 'BINDACCOUNTBUFFER',
+    log: `[BUFFER - ${moment().format()}]`,
+    COOP_NAME(name) {
+        return name.split('-')[0].toUpperCase()
+    },
+    async SET(payload) {
+        console.log(`${this.log}[SET] - ${this.type}:${this.COOP_NAME(payload.url_coop)}:KTB:${payload.action}:${payload.sigma_key}`)
+        // * ตัวอย่าง Cache Statucture BINDACCOUNTBUFFER:COOP_NAME (เช่น PEA,EGAT):ACTION (เช่น  BIND,REVOKE):SIGMA_KEY
+        await Client.setEx(`${this.type}:${this.COOP_NAME(payload.url_coop)}:KTB:${payload.action}:${payload.sigma_key}`, 60, JSON.stringify(payload))
+        await Client.set(`${this.type}:${this.COOP_NAME(payload.url_coop)}:KTB:${payload.action}:${payload.sigma_key}:EX`, JSON.stringify(payload))
+        return true
+    },
+    async GET(action, sigma_key, coop) {
+        console.log(`${this.log}[GET] - ${this.type}:${this.COOP_NAME(coop)}:KTB:${action}:${sigma_key}`)
+        return await Client.get(`${this.type}:${this.COOP_NAME(coop)}:KTB:${action}:${sigma_key}`)
+
+    },
+    async GET_BOOL(action, sigma_key, coop) {
+        if (await Client.get(`${this.type}:${this.COOP_NAME(coop)}:KTB:${action}:${sigma_key}`) !== null) return true
+        else throw `${this.type}:${this.COOP_NAME(coop)}:KTB:${action}:${sigma_key} - No data in cache`
+    },
+    async GET_MONIT(query) {
+        return await Client.keys(`*${query}*`)
+    },
+    async DEL(action, sigma_key, coop) {
+        console.log(`${this.log}[DEL] - ${this.type}:${this.COOP_NAME(coop)}:KTB:${action}:${sigma_key}`)
+        await Client.del(`${this.type}:${this.COOP_NAME(coop)}:KTB:${action}:${sigma_key}`)
+        return true
+    },
+    async GET_WITH_KEY(key) {
+        if (await Client.get(key) !== null) {
+            console.log(`${this.log}[GET_WITH_KEY] - ${key}`)
+            return await Client.get(`${key}`)
+        } else throw `${key} - No data in cache`
+    },
+    async DEL_WITH_KEY(key) {
+        console.log(`${this.log}[DEL] - ${key}`)
+        await Client.del(`${key}`)
+        return true
     }
 }
 

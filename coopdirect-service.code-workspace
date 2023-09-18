@@ -11,6 +11,21 @@
 		},
 		{
 			"path": "../../Mobile/service-igat"
+		},
+		{
+			"path": "../../Mobile/service-egat-20230328"
+		},
+		{
+			"path": "../../node-wd"
+		},
+		{
+			"path": "../../php_socket_log"
+		},
+		{
+			"path": "../../Mobile/service-mobile-gen"
+		},
+		{
+			"path": "../../Mobile/service-doh"
 		}
 	],
 	"settings": {

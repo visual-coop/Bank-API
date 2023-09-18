@@ -18,6 +18,13 @@ model logtranscimb {
   log_response Json?                  @db_coop.Json
 }
 
+model buffer_history {
+  id  Int @id @default(autoincrement())
+  in_date  DateTime @default(now()) @db_coop.DateTime(0)
+  sigma_key String? @db_coop.Text
+  body Json @db_coop.Json
+}
+
 enum e_trans_flag {
   DESPOSIT @map("1")
   WITHDRAW @map("-1")
