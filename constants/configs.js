@@ -9,6 +9,8 @@ export default {
         'getStatusV2CIMB'
     ],
 
+    api_port : 10003,
+
     // DB
     redis: {
         host: 'localhost',

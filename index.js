@@ -7,7 +7,7 @@ import { Startup_Config as radis } from '#cache/redis'
 import configs from '#constants/configs'
 
 // INIT
-const PORT = process.env.PORT || 10003
+const PORT = process.env.PORT || configs.api_port
 const router = express()
 const __dirname = getDirName(import.meta.url)
 
