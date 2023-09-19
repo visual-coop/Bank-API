@@ -1,0 +1,29 @@
+version: '3'
+services:
+  redis:
+    image: redis
+    expose:
+      - 6379
+  node_service:
+    image: node:18-alpine3.17
+    container_name: api-service
+    build: .
+    volumes:
+      - .:/usr/src/api/
+      - dependencies:/usr/src/api/node_modules
+    working_dir: /usr/src/api
+    environment:
+      NODE_ENV: development
+      DATABASE_URL_COOP: "mysql://root:DGWUpDJcGVyA9pkiCyC7@containers-us-west-28.railway.app:5886/railway"
+      DATABASE_URL_GATEWAY: "mysql://root:@Egat2020@43.229.79.117:3307/api"
+      DATABASE_URL_GATEWAY_MONGODB: "mongodb://mongo:jzwhfTsTkV1JH2pnwrNR@containers-us-west-180.railway.app:5680"
+    links: 
+      - redis
+    ports:
+      - 80:10003
+      - 9229:9229
+    depends_on:
+      - redis
+volumes:
+  dependencies:
+

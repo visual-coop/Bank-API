@@ -5,14 +5,17 @@ import { config_cimb_v2 } from '#API/CIMB/config'
 import { COOP_DB } from '#db/query'
 import configs from '#constants/configs'
 
-const Client = createClient({ ...configs.redis })
+const Client = createClient({
+    legacyMode: true,
+    socket: {...configs.redis}
+})
 
 Client.on('error', err => console.log('Redis Client Error', err))
 
 export const Startup_Config = async () => {
     await Client.connect()
     if (Client.isOpen) {
-        Client.configSet("notify-keyspace-events", "Ex")
+        //Client.configSet("notify-keyspace-events", "Ex")
         console.log("[Redis] Client Listening on PORT =>", 6379)
         await Client.set('INIT_CONFIGS:CIMB', JSON.stringify(await GATEWAY_DB_CIMB.GET_INIT_TO_CACHE()))
         const coops = ['PEA', 'IGAT']
@@ -23,12 +26,12 @@ export const Startup_Config = async () => {
     const sub = Client.duplicate()
     await sub.connect()
 
-    sub.subscribe("__keyevent@0__:expired", async (key) => {
-        const payload = await Client.get(`${key}:EX`)
-        await COOP_DB.SET_BUUFER_LOG(JSON.parse(payload))
-        console.log('Del =>', key)
-        await Client.del(`${key}:EX`)
-    })
+    // sub.subscribe("__keyevent@0__:expired", async (key) => {
+    //     const payload = await Client.get(`${key}:EX`)
+    //     await COOP_DB.SET_BUUFER_LOG(JSON.parse(payload))
+    //     console.log('Del =>', key)
+    //     await Client.del(`${key}:EX`)
+    // })
 }
 
 export const cron_status_actions = {

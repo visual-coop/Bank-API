@@ -13,8 +13,8 @@ export default {
 
     // DB
     redis: {
-        host: 'localhost',
+        host: 'redis',
         port: 6379,
-        password: 'Fs#5132Xcza'
+        //password: 'Fs#5132Xcza'
     }
 }
