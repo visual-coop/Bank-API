@@ -1,30 +1,44 @@
 import { createClient } from 'redis'
+import Redis from 'ioredis'
 import moment from 'moment'
 import { GATEWAY_DB_CIMB } from '#db/query'
 import { config_cimb_v2 } from '#API/CIMB/config'
 import { COOP_DB } from '#db/query'
 import configs from '#constants/configs'
+import { c_time } from '#libs/Functions'
 
-const Client = createClient({
-    legacyMode: true,
-    socket: {...configs.redis}
-})
+// const Client = createClient({
+//     legacyMode: true,
+//     socket: {...configs.redis}
+// })
 
-Client.on('error', err => console.log('Redis Client Error', err))
+let Client
+
+const redisConnection = () => {
+    return new Promise((resolve, reject) => {
+        const redis = new Redis({...configs.redis})
+        redis.on('connect', () => {
+            console.log(`[${c_time()}][Redis] Client Listening on PORT :`, configs.redis.port)
+            resolve(redis)
+          })
+      
+          redis.on('error', (error) => {
+            console.error(`[${c_time()}][Redis] Connection error :`, error)
+            reject(error)
+          })
+    })
+}
 
 export const Startup_Config = async () => {
-    await Client.connect()
-    if (Client.isOpen) {
+    await redisConnection().then((res) => Client = res)
+    if (Client.status == 'connect') {
         //Client.configSet("notify-keyspace-events", "Ex")
-        console.log("[Redis] Client Listening on PORT =>", 6379)
         await Client.set('INIT_CONFIGS:CIMB', JSON.stringify(await GATEWAY_DB_CIMB.GET_INIT_TO_CACHE()))
         const coops = ['PEA', 'IGAT']
         coops.forEach(async (coop) => await Client.set(`CRON_${coop}:STATUS`, '0'))
-        // await Client.setEx("test", 10 , "1")
-        // await Client.set('test_ex','2')
     }
-    const sub = Client.duplicate()
-    await sub.connect()
+    // const sub = Client.duplicate()
+    // await sub.connect()
 
     // sub.subscribe("__keyevent@0__:expired", async (key) => {
     //     const payload = await Client.get(`${key}:EX`)
@@ -57,7 +71,7 @@ export const BUFFER_QUERY = async (query) => {
 export const CIMB_TOKEN = {
     type: 'TRANSACTION',
     async SET(uuid, token) {
-        await Client.setEx(
+        await Client.setex(
             `${this.type}:${config_cimb_v2.bank_name}:${uuid}`,
             13 * 60, // 13 Minute
             JSON.stringify(token)
