@@ -10,7 +10,7 @@
 - PHP v. 7.4
 - Redis ล่าสุด
 
-# ขั้นตอนการติดตั้ง Redis
+# ขั้นตอนการติดตั้ง Redis (Optional)
 - ติดตั้ง Docker 
 - ทำการดึงอิมเมจของ Redis (ล่าสุด) ด้วย `docker pull redis`
 - ทำการสร้าง Container ของ redis
