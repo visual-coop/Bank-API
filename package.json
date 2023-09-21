@@ -5,9 +5,9 @@
   "exports": "./index.js",
   "type": "module",
   "scripts": {
-    "start": "node ./index.mjs",
-    "dev-prisma": "prisma generate --schema=./prisma/coop/schema.prisma && prisma generate --schema=./prisma/gateway/schema.prisma && nodemon ./index.mjs",
-    "dev": "nodemon --inspect=0.0.0.0 ./index.mjs"
+    "start": "node ./index.js",
+    "dev-prisma": "prisma generate --schema=./prisma/coop/schema.prisma && prisma generate --schema=./prisma/gateway/schema.prisma && nodemon ./index.js",
+    "dev": "nodemon --inspect=0.0.0.0 ./index.js"
   },
   "author": "THADTHEP THADSRI",
   "license": "ISC",
