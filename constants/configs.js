@@ -15,6 +15,6 @@ export default {
     redis: {
         host: 'redis', // Change to 'redis' on Docker
         port: 6379,
-        password: 'Fs#5132Xcza'
+        //password: 'Fs#5132Xcza'
     }
 }
