@@ -7,6 +7,7 @@ COPY package-lock.json ./
 ENV NODE_ENV=development
 
 RUN npm i
+RUN npm i jsonwebtoken
 RUN npm i nodemon -g
 
 COPY . .
