@@ -35,6 +35,6 @@
     "#cache/*": "./cache/*.js",
     "#constants/*": "./constants/*.mjs",
     "#constants/crons": "./constants/crons_config.json",
-    "#middleware/*": "./middleware/*.mjs"
+    "#middleware/*": "./middleware/*.js"
   }
 }
