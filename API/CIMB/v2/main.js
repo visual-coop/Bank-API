@@ -1,9 +1,11 @@
 import express from 'express'
+import configs from '#constants/configs'
 import * as CIMB from '#libs/Functions_CIMB'
 import * as lib from '#libs/Functions'
 import { config_cimb_v2 } from '#API/CIMB/config'
 import { get_init_config, CIMB_TOKEN } from '#cache/redis'
 import { GATEWAY_DB_CIMB } from '#db/query'
+import { decodedJWT } from '#middleware/verify_input'
 
 const router = express.Router()
 router.use(express.json())
@@ -14,7 +16,8 @@ router.use(express.urlencoded({
 
 const oAuthTokenV2CIMB = async (req, res, next) => {
     req.bank_api_path = await lib.bank_api_path()
-    const CONFIGS_INIT = (JSON.parse(await get_init_config(config_cimb_v2.bank_name))).filter(result => result.coop_key === req.body.coop_key)[0]
+    const CONFIGS_INIT = (JSON.parse(await get_init_config(config_cimb_v2.bank_name)))
+        .filter(result => result.coop_key === (configs.MODE !== 'UAT' ? req.body.coop_key : 'egat'))[0]
     req.body = {
         ...CONFIGS_INIT,
         ...req.body
@@ -70,7 +73,7 @@ const oAuthTokenV2CIMB = async (req, res, next) => {
     }
 }
 
-router.post('/inquiryAccountCIMB', oAuthTokenV2CIMB, async (req, res) => {
+router.post('/inquiryAccountCIMB', decodedJWT, oAuthTokenV2CIMB, async (req, res) => {
     const arg_keys = [
         'opay_encrypt_key64',
         'opay_encrypt_iv64',
@@ -133,7 +136,7 @@ router.post('/inquiryAccountCIMB', oAuthTokenV2CIMB, async (req, res) => {
     }
 })
 
-router.post('/confirmFunsTransferCIMB', oAuthTokenV2CIMB, async (req, res) => {
+router.post('/confirmFunsTransferCIMB', decodedJWT, oAuthTokenV2CIMB, async (req, res) => {
     const arg_keys = [
         'opay_encrypt_key64',
         'opay_encrypt_iv64',
@@ -238,7 +241,7 @@ router.post('/confirmFunsTransferCIMB', oAuthTokenV2CIMB, async (req, res) => {
     }
 })
 
-router.post('/getStatusV2CIMB', oAuthTokenV2CIMB, async (req, res) => {
+router.post('/getStatusV2CIMB' ,decodedJWT, oAuthTokenV2CIMB, async (req, res) => {
     const arg_keys = [
         'opay_encrypt_key64',
         'opay_encrypt_iv64',

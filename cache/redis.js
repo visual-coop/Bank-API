@@ -75,8 +75,9 @@ export const BUFFER_QUERY = async (query) => {
 }
 
 export const setEx = async (key, value, ttl) => {
-    await Client.setex(key, ttl, value)
-    await Client.publish('expireValue', JSON.stringify({ key, value }))
+    await Client.set(key, value)
+    // await Client.publish('expireValue', JSON.stringify({ key, value }))
+    await Client.expire(key , ttl)
 }
 
 // ===== CIMB ====== //

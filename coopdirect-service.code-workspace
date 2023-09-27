@@ -13,9 +13,6 @@
 			"path": "../../Mobile/service-igat"
 		},
 		{
-			"path": "../../Mobile/service-egat-20230328"
-		},
-		{
 			"path": "../../node-wd"
 		},
 		{
@@ -26,6 +23,9 @@
 		},
 		{
 			"path": "../../Mobile/service-doh"
+		},
+		{
+			"path": "../../Mobile/service-igat-test"
 		}
 	],
 	"settings": {

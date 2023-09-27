@@ -121,6 +121,8 @@ export const buildOPAYRequest = (body) => {
                 // ? UAT
                 BeneficiaryName = "Deverloper"
                 SenderReference = "UAT123456"
+                ProxyType = 'NATID'
+                body.destination = '1100701675044'
             }
         }
         else ClientTransactionNo = `COOP${transaction_timestance}`

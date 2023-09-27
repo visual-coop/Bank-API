@@ -2,11 +2,12 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "#API/*": ["./API/*.js"],
-            "#db/*": ["./db/*.js"],
-            "#libs/*": ["./libs/*.js"],
-            "#cache/*": ["./cache/*.js"],
-            "#constants/*": ["./constants/*.js"]
+            "#API/*": ["./API/*.js", "./API/*.mjs"],
+            "#db/*": ["./db/*.js", "./db/*.mjs"],
+            "#libs/*": ["./libs/*.js", "./libs/*.mjs"],
+            "#cache/*": ["./cache/*.js", "./cache/*.mjs"],
+            "#constants/*": ["./constants/*.js", "./constants/*.mjs"],
+            "#middleware/*": ["./middleware/*.js", "./middleware/*.mjs"]
         }
     }
 }
