@@ -8,7 +8,8 @@ ENV NODE_ENV=development
 
 RUN npm i
 RUN npm i nodemon -g
+RUN npm i pm2 -g
 
 COPY . .
 
-CMD ["npm" , "run" , "dev-prisma" , "&&" , "node" , "./index.js"]
+CMD ["npm" , "run" , "dev-prisma"]

@@ -110,5 +110,16 @@ export const GATEWAY_DB_CIMB = {
         } catch (error) {
             
         }
+    },
+    async GET_PAYER_KBANK (payload) {
+        try {
+            const result = await this.DB.$queryRaw`
+                SELECT payer_account,pass_algo_nonbank,merchant_id
+                FROM coop_provide_kbank
+                
+            `
+        } catch (error) {
+            
+        }
     }
 }

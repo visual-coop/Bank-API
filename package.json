@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node ./index.js",
-    "dev-prisma": "prisma generate --schema=./prisma/coop/schema.prisma && prisma generate --schema=./prisma/gateway/schema.prisma && nodemon ./index.js",
+    "dev-prisma": "prisma generate --schema=./prisma/coop/schema.prisma && prisma generate --schema=./prisma/gateway/schema.prisma && pm2 start ./index.js --watch",
     "dev": "nodemon --inspect=0.0.0.0 ./index.js"
   },
   "author": "THADTHEP THADSRI",
