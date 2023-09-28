@@ -1,6 +1,5 @@
 import express from 'express'
 import configs from '#constants/configs'
-import moment from 'moment'
 import * as KBANK from "#API/KBANK/v2/function"
 import * as lib from '#libs/Functions'
 import { config_kbank_v2 } from "#API/KBANK/config"
@@ -13,6 +12,8 @@ API.use(express.urlencoded({
     extended: true,
     defer: true
 }))
+
+const mode = "UAT"
 
 const oAuthV2 = async (req, res, next) => {
     const Credential = `${config_kbank_v2.credentials.consumer_id}:${config_kbank_v2.credentials.consumer_secret}`
@@ -31,7 +32,7 @@ const oAuthV2 = async (req, res, next) => {
                     "grant_type": "client_credentials"
                 }
             }
-            const result = await lib.RequestFunction.post(true, endpoint.default.kbank.oAuthV2, obj.headers, obj.body)
+            const result = await lib.RequestFunction.post(true, endpoint.default.kbank[mode].oAuthV2, obj.headers, obj.body)
             await token_session.SET(req.body.unique_key,config_kbank_v2.bank_name,result.data)
         }
         next()
@@ -75,7 +76,7 @@ API.post('/transferAC', oAuthV2, async (req, res) => {
             },
             body: { ...req.body.payload }
         } //moment().format('yyyy-MM-DDTHH:mm:ss:SSS+07:00'),
-        const result = await lib.RequestFunction.post(true,endpoint.default.kbank.tranferAC,obj.headers,obj.body)
+        const result = await lib.RequestFunction.post(true,endpoint.default.kbank[mode].tranferAC,obj.headers,obj.body)
 
         //await token_session.DEL(req.body.unique_key,config_kbank_v2.bank_name)
 
@@ -101,7 +102,7 @@ API.post('/inquiryOtherBankAC' , oAuthV2 , async (req,res) => {
             },
             body: { ...req.body.payload }
         }
-        const result = await lib.RequestFunction.post(true,endpoint.default.kbank.inquiryOtherBankAC,obj.headers,obj.body)
+        const result = await lib.RequestFunction.post(true,endpoint.default.kbank[mode].inquiryOtherBankAC,obj.headers,obj.body)
         res.status(200).json(result.data)
     } catch (error) {
         console.error(`[${lib.c_time()}][${req.originalUrl}] Error => ${error}`)
@@ -124,7 +125,7 @@ API.post('/transferOtherBankAC' , async (req,res) => {
             },
             body: { ...req.body.payload }
         }
-        const result = await lib.RequestFunction.post(true,endpoint.default.kbank.transferOtherBankAC,obj.headers,obj.body)
+        const result = await lib.RequestFunction.post(true,endpoint.default.kbank[mode].transferOtherBankAC,obj.headers,obj.body)
         res.status(200).json(result.data)
     } catch (error) {
         console.error(`[${lib.c_time()}][${req.originalUrl}] Error => ${error}`)
