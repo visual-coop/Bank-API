@@ -12,4 +12,4 @@ RUN npm i pm2 -g
 
 COPY . .
 
-CMD ["npm" , "run" , "dev-prisma"]
+CMD ["npm" , "run" , "dev-prisma" , "&&" , "pm2-runtime" , "start" , "index.js" , "--watch"]
