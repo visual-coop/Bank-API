@@ -11,4 +11,4 @@ RUN npm i nodemon -g
 
 COPY . .
 
-CMD ["npm" , "run" , "dev-prisma" , "&&" , "node" , "./index.mjs"]
+CMD ["npm" , "run" , "dev-prisma" , "&&" , "node" , "./index.js"]

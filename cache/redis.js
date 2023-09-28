@@ -80,6 +80,30 @@ export const setEx = async (key, value, ttl) => {
     await Client.expire(key , ttl)
 }
 
+export const token_session = {
+    type: 'SESSION_TRANS',
+    async SET (uuid,bank,token) {
+        await Client.setex(
+            `${this.type}:${bank}:${uuid}`,
+            28 * 60, //  28 Minute
+            JSON.stringify(token)
+        )
+    },
+    async GET (uuid,bank) {
+        if (await Client.get(`${this.type}:${bank}:${uuid}`) === null) return true
+    },
+    async GET_RAW(uuid,bank) {
+        return JSON.parse(await Client.get(`${this.type}:${bank}:${uuid}`))
+    },
+    async GET_AUTH (uuid,bank) {
+        const result = JSON.parse(await Client.get(`${this.type}:${bank}:${uuid}`))
+        return result?.access_token ?? null
+    },
+    async DEL (uuid,bank) {
+        await Client.del(`${this.type}:${bank}:${uuid}`)
+    }
+}
+
 // ===== CIMB ====== //
 
 export const CIMB_TOKEN = {
