@@ -116,7 +116,7 @@ export const GATEWAY_DB_CIMB = {
             const result = await this.DB.$queryRaw`
                 SELECT payer_account,pass_algo_nonbank,merchant_id
                 FROM coop_provide_kbank
-                
+                WHERE 
             `
         } catch (error) {
             
