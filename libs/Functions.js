@@ -1,8 +1,17 @@
 import axios from 'axios'
 import moment from 'moment'
+import https from 'http'
+import fs from 'fs'
 import { v4 as uuid } from 'uuid'
 import configs from '#constants/configs'
 import { getDirName } from '#libs/helper'
+
+const __dirname = getDirName(import.meta.url)
+
+const httpsAgent = new https.Agent({
+    key: fs.readFileSync(`${__dirname}/../constants/cert/sccl_privatekey.key`),
+    cert: fs.readFileSync(`${__dirname}/../constants/cert/icoop-sccl_stou_ac_th.crt`)
+})
 
 // ===== Util Functions =====
 

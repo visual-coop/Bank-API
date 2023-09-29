@@ -1,6 +1,6 @@
 import Redis from 'ioredis'
 import moment from 'moment'
-import { GATEWAY_DB_CIMB } from '#db/query'
+import { GATEWAY_DB } from '#db/query'
 import { config_cimb_v2 } from '#API/CIMB/config'
 import { COOP_DB } from '#db/query'
 import configs from '#constants/configs'
@@ -39,7 +39,7 @@ const Client = await redisConnection()
 export const Startup_Config = async () => {
     if (Client.status == 'connect') {
         //Client.configSet("notify-keyspace-events", "Ex")
-        await Client.set('INIT_CONFIGS:CIMB', JSON.stringify(await GATEWAY_DB_CIMB.GET_INIT_TO_CACHE()))
+        await Client.set('INIT_CONFIGS:CIMB', JSON.stringify(await GATEWAY_DB.GET_INIT_TO_CACHE()))
         const coops = ['PEA', 'IGAT']
         coops.forEach(async (coop) => await Client.set(`CRON_${coop}:STATUS`, '0'))
         await setEx('test' , '123' , 5)

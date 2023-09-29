@@ -4,7 +4,7 @@ import * as CIMB from '#libs/Functions_CIMB'
 import * as lib from '#libs/Functions'
 import { config_cimb_v2 } from '#API/CIMB/config'
 import { get_init_config, CIMB_TOKEN } from '#cache/redis'
-import { GATEWAY_DB_CIMB } from '#db/query'
+import { GATEWAY_DB } from '#db/query'
 import { decodedJWT } from '#middleware/verify_input'
 
 const router = express.Router()
@@ -205,7 +205,7 @@ router.post('/confirmFunsTransferCIMB', decodedJWT, oAuthTokenV2CIMB, async (req
                     log_response: JSON.parse(result)
                 }
 
-                await GATEWAY_DB_CIMB.SET_LOG(log_payload)
+                await GATEWAY_DB.SET_LOG(log_payload)
                     .then(() => {
                         console.log(`[${lib.c_time()}][Transaction log] Insert sucessfully => ${req.body.ClientTransactionNo}`)
                     })

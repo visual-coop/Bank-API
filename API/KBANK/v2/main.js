@@ -5,6 +5,7 @@ import * as lib from '#libs/Functions'
 import { config_kbank_v2 } from "#API/KBANK/config"
 import * as endpoint from '#constants/api_endpoint'
 import { token_session } from '#cache/redis'
+import { GATEWAY_DB } from '#db/query'
 
 const API = express.Router()
 API.use(express.json())
@@ -42,6 +43,27 @@ const oAuthV2 = async (req, res, next) => {
     }
 }
 
+API.post('/test-ssl' , oAuthV2 , async (req,res) => {
+    try {
+        const obj = {
+            headers : {
+                "Authorization": `Bearer ${(await token_session.GET_RAW(req.body.unique_key,config_kbank_v2.bank_name)).access_token}`,
+                "Content-Type": "application/json",
+                "x-test-mode": req.headers['x-test-mode']
+            }
+        }
+        const result = await lib.RequestFunction.post(true,endpoint.default.kbank[mode].twoway_ssl,obj.headers)
+        res.status(200).json(result.data)
+    } catch (error) {
+        console.error(`[${lib.c_time()}][${req.originalUrl}] Error => ${error}`)
+        const send_res = {
+            ResponseCode: "KBANKERR02",
+            message: error
+        }
+        res.status(500).json(send_res)
+    }
+})
+
 API.post('/inquiryAC', oAuthV2, async (req, res) => {
     try {
         const obj = {
@@ -53,7 +75,7 @@ API.post('/inquiryAC', oAuthV2, async (req, res) => {
             },
             body: { ...req.body.payload }
         }
-        const result = await lib.RequestFunction.post(true, endpoint.default.kbank.inquiryAC, obj.headers, obj.body)
+        const result = await lib.RequestFunction.post(true, endpoint.default.kbank[mode].inquiryAC, obj.headers, obj.body)
         res.status(200).json(result.data)
     } catch (error) {
         console.error(`[${lib.c_time()}][${req.originalUrl}] Error => ${error}`)
@@ -92,7 +114,10 @@ API.post('/transferAC', oAuthV2, async (req, res) => {
 })
 
 API.post('/inquiryOtherBankAC' , oAuthV2 , async (req,res) => {
+    
     try {
+        
+        //await GATEWAY_DB.GET_PAYER_KBANK()
         const obj = {
             headers: {
                 "Authorization": `Bearer ${(await token_session.GET_RAW(req.body.unique_key,config_kbank_v2.bank_name)).access_token}`,

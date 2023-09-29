@@ -58,7 +58,7 @@ export const COOP_DB = {
     }
 }
 
-export const GATEWAY_DB_CIMB = {
+export const GATEWAY_DB = {
     DB_NAME: 'GATEWAY',
     DB: new DB_CLIENT_GATEWAY(),
     async GET_INIT (payload) {
@@ -116,10 +116,11 @@ export const GATEWAY_DB_CIMB = {
             const result = await this.DB.$queryRaw`
                 SELECT payer_account,pass_algo_nonbank,merchant_id
                 FROM coop_provide_kbank
-                WHERE 
+                WHERE coop_key = ${payload}
             `
+            return result
         } catch (error) {
-            
+            throw error
         }
     }
 }
