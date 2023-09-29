@@ -1,5 +1,5 @@
 export default {
-    MODE : 'UAT', // PROD , UAT
+    MODE : 'PROD', // PROD , UAT
     CONFIG_EXTERNAL : "https://coopdirect.thaicoop.co/coopdirect-test/config/config_external.json",
     BANK_API_PATH : 'http://gatewaydirect.thaicoop.co/coopdirect/config/config_bankurl.json',
     BANK_API_PATH_SELECT : [

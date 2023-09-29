@@ -6,6 +6,7 @@ import { config_kbank_v2 } from "#API/KBANK/config"
 import * as endpoint from '#constants/api_endpoint'
 import { token_session } from '#cache/redis'
 import { GATEWAY_DB } from '#db/query'
+import { decodedJWT } from '#middleware/verify_input'
 
 const API = express.Router()
 API.use(express.json())
@@ -35,7 +36,6 @@ const oAuthV2 = async (req, res, next) => {
             }
             
             const result = await lib.RequestFunction.post(true, endpoint.default.kbank[mode].oAuthV2, obj.headers, obj.body)
-            console.log(result)
             await token_session.SET(req.body.unique_key,config_kbank_v2.bank_name,result.data)
         }
         next()
@@ -66,7 +66,8 @@ API.post('/test-ssl' , oAuthV2 , async (req,res) => {
     }
 })
 
-API.post('/inquiryAC', oAuthV2, async (req, res) => {
+API.post('/inquiryAC', decodedJWT , oAuthV2, async (req, res) => {
+    console.log(req.body)
     try {
         const obj = {
             headers: {
@@ -89,7 +90,7 @@ API.post('/inquiryAC', oAuthV2, async (req, res) => {
     }
 })
 
-API.post('/transferAC', oAuthV2, async (req, res) => {
+API.post('/transferAC', decodedJWT , oAuthV2, async (req, res) => {
     try {
         const obj = {
             headers: {
