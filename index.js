@@ -31,11 +31,10 @@ const options = {
     cert: fs.readFileSync(`${__dirname}/constants/cert/thaicoop_co_2023.crt`),
     rejectUnauthorized: false
 }
-const server = https.createServer(options,router)
+//const server = https.createServer(options,router)
 
-server.listen(PORT, async () => {
+router.listen(PORT, async () => {
     console.log(`[${c_time()}][API] Server Listening on PORT :`, PORT)
     await radis()
     console.log(`[${c_time()}][Mode] : ${configs.MODE}`)
 })
-
