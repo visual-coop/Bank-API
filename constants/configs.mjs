@@ -1,5 +1,5 @@
 export default {
-    MODE : 'UAT', // PROD , UAT
+    MODE : 'PROD', // PROD , UAT
     CONFIG_EXTERNAL : "https://coopdirect.thaicoop.co/coopdirect-test/config/config_external.json",
     BANK_API_PATH : 'http://gatewaydirect.thaicoop.co/coopdirect/config/config_bankurl.json',
     BANK_API_PATH_SELECT : [
@@ -13,8 +13,8 @@ export default {
 
     // DB
     redis: {
-        host: '43.229.79.117', // Change to 'redis' on Docker
+        host: 'redis', // Change to 'redis' on Docker
         port: 6379,
-        password: 'Fs#5132Xcza'
+        //password: 'Fs#5132Xcza'
     }
 }

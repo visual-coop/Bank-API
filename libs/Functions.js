@@ -77,6 +77,11 @@ export const pad_amt = (value) => {
     return value_splited[0]
 }
 
+export const fillWithZeros = (str,digi) => {
+    while (str.length < digi) str += '0' + str
+    return str
+}
+
 export const bank_api_path_ = async () => {
     return (await RequestFunction.get(false, configs.BANK_API_PATH, null, null)).data
 }

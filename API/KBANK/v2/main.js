@@ -1,5 +1,6 @@
 import express from 'express'
 import configs from '#constants/configs'
+import moment from 'moment'
 import * as KBANK from "#API/KBANK/v2/function"
 import * as lib from '#libs/Functions'
 import { config_kbank_v2 } from "#API/KBANK/config"
@@ -35,7 +36,6 @@ const oAuthV2 = async (req, res, next) => {
             }
             
             const result = await lib.RequestFunction.post(true, endpoint.default.kbank[mode].oAuthV2, obj.headers, obj.body)
-            console.log(result)
             await token_session.SET(req.body.unique_key,config_kbank_v2.bank_name,result.data)
         }
         next()
@@ -68,16 +68,18 @@ API.post('/test-ssl' , oAuthV2 , async (req,res) => {
 
 API.post('/inquiryAC', oAuthV2, async (req, res) => {
     try {
+        req.body.payload.requestDateTime
         const obj = {
             headers: {
                 "Authorization": `Bearer ${(await token_session.GET_RAW(req.body.unique_key,config_kbank_v2.bank_name)).access_token}`,
                 "Content-Type": "application/json",
-                "env-id": req.headers['env-id'],
+                //"env-id": req.headers['env-id'],
                 "x-test-mode": req.headers['x-test-mode']
             },
             body: { ...req.body.payload }
         }
-        const result = await lib.RequestFunction.post(true, endpoint.default.kbank[mode].inquiryAC, obj.headers, obj.body)
+
+        const result = await lib.RequestFunction.post(true, endpoint.default.kbank[mode].verifyData, obj.headers, obj.body)
         res.status(200).json(result.data)
     } catch (error) {
         console.error(`[${lib.c_time()}][${req.originalUrl}] Error => ${error}`)
@@ -100,7 +102,7 @@ API.post('/transferAC', oAuthV2, async (req, res) => {
             },
             body: { ...req.body.payload }
         } //moment().format('yyyy-MM-DDTHH:mm:ss:SSS+07:00'),
-        const result = await lib.RequestFunction.post(true,endpoint.default.kbank[mode].tranferAC,obj.headers,obj.body)
+        const result = await lib.RequestFunction.post(true,endpoint.default.kbank[mode].fundTransfer,obj.headers,obj.body)
 
         //await token_session.DEL(req.body.unique_key,config_kbank_v2.bank_name)
 
