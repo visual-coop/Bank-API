@@ -9,8 +9,8 @@ import { getDirName } from '#libs/helper'
 const __dirname = getDirName(import.meta.url)
 
 const httpsAgent = new https.Agent({
-    key: fs.readFileSync(`${__dirname}/../constants/cert/sccl_privatekey.key`),
-    cert: fs.readFileSync(`${__dirname}/../constants/cert/icoop-sccl_stou_ac_th.crt`),
+    key: fs.readFileSync(`${__dirname}/../constants/cert/key.pem`),
+    cert: fs.readFileSync(`${__dirname}/../constants/cert/thaicoop_co_2023.crt`),
     rejectUnauthorized: false
 })
 

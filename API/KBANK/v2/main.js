@@ -17,7 +17,7 @@ API.use(express.urlencoded({
 const mode = "UAT"
 
 const oAuthV2 = async (req, res, next) => {
-    const Credential = `${config_kbank_v2.credentials.consumer_id}:${config_kbank_v2.credentials.consumer_secret}`
+    const Credential = `${config_kbank_v2.credentials[mode].consumer_id}:${config_kbank_v2.credentials[mode].consumer_secret}`
 
     try {
         if (await token_session.GET(req.body.unique_key,config_kbank_v2.bank_name)) {
@@ -26,16 +26,16 @@ const oAuthV2 = async (req, res, next) => {
                 headers: {
                     "Authorization": `Basic ${KBANK.Base64Encoded(Credential)}`,
                     "Content-Type": "application/x-www-form-urlencoded",
-                    //"env-id": "OAUTH2",
-                    //"x-test-mode": "true"
+                    "env-id": "OAUTH2",
+                    "x-test-mode": "true"
                 },
                 body: {
                     "grant_type": "client_credentials"
                 }
             }
-            console.log(obj)
-            const result = await lib.RequestFunction.post(true, endpoint.default.kbank[mode].oAuthV2, obj.headers, obj.body)
             
+            const result = await lib.RequestFunction.post(true, endpoint.default.kbank[mode].oAuthV2, obj.headers, obj.body)
+            console.log(result)
             await token_session.SET(req.body.unique_key,config_kbank_v2.bank_name,result.data)
         }
         next()
@@ -51,7 +51,7 @@ API.post('/test-ssl' , oAuthV2 , async (req,res) => {
             headers : {
                 "Authorization": `Bearer ${(await token_session.GET_RAW(req.body.unique_key,config_kbank_v2.bank_name)).access_token}`,
                 "Content-Type": "application/json",
-                "x-test-mode": req.headers['x-test-mode']
+                //"x-test-mode": req.headers['x-test-mode']
             }
         }
         const result = await lib.RequestFunction.post(true,endpoint.default.kbank[mode].twoway_ssl,obj.headers)

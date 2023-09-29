@@ -28,7 +28,7 @@ router.get('*', (req, res) => {
 // HTTPS
 const options = {
     key: fs.readFileSync(`${__dirname}/constants/cert/key.pem`),
-    cert: fs.readFileSync(`${__dirname}/constants/cert/certificate.pem`),
+    cert: fs.readFileSync(`${__dirname}/constants/cert/thaicoop_co_2023.crt`),
     rejectUnauthorized: false
 }
 const server = https.createServer(options,router)
