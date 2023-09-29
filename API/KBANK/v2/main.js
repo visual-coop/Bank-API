@@ -14,7 +14,7 @@ API.use(express.urlencoded({
     defer: true
 }))
 
-const mode = "UAT"
+const mode = "sandbox"
 
 const oAuthV2 = async (req, res, next) => {
     const Credential = `${config_kbank_v2.credentials.consumer_id}:${config_kbank_v2.credentials.consumer_secret}`

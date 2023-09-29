@@ -10,7 +10,8 @@ const __dirname = getDirName(import.meta.url)
 
 const httpsAgent = new https.Agent({
     key: fs.readFileSync(`${__dirname}/../constants/cert/sccl_privatekey.key`),
-    cert: fs.readFileSync(`${__dirname}/../constants/cert/icoop-sccl_stou_ac_th.crt`)
+    cert: fs.readFileSync(`${__dirname}/../constants/cert/icoop-sccl_stou_ac_th.crt`),
+    rejectUnauthorized: false
 })
 
 // ===== Util Functions =====
@@ -123,7 +124,7 @@ export const RequestFunction = {
         if (isToken) headers.Authorization = `${headers.Authorization}`
         return await axios.post(url, {
             ...data
-        }, { headers, timeout: timeout })
+        }, { headers, timeout: timeout , httpsAgent })
             .then((res) => res)
             .catch((error) => {
                 if (!!error.response) {

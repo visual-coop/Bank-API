@@ -13,7 +13,7 @@ export default {
 
     // DB
     redis: {
-        host: 'localhost', // Change to 'redis' on Docker
+        host: '43.229.79.117', // Change to 'redis' on Docker
         port: 6379,
         password: 'Fs#5132Xcza'
     }
