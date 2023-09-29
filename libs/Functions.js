@@ -1,6 +1,6 @@
 import axios from 'axios'
 import moment from 'moment'
-import https from 'http'
+import https from 'https'
 import fs from 'fs'
 import { v4 as uuid } from 'uuid'
 import configs from '#constants/configs'
@@ -124,7 +124,7 @@ export const RequestFunction = {
         if (isToken) headers.Authorization = `${headers.Authorization}`
         return await axios.post(url, {
             ...data
-        }, { headers, timeout: timeout , httpsAgent })
+        }, { headers, timeout: timeout , httpsAgent : httpsAgent})
             .then((res) => res)
             .catch((error) => {
                 if (!!error.response) {
