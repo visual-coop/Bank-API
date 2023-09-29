@@ -67,16 +67,18 @@ API.post('/test-ssl' , oAuthV2 , async (req,res) => {
 })
 
 API.post('/inquiryAC', decodedJWT , oAuthV2, async (req, res) => {
-    console.log(req.body)
+    const { unique_key , ...payload} = req.body
     try {
+        const merchant_id = await GATEWAY_DB.GET_PAYER_KBANK(payload.coop_key)
+        
         const obj = {
             headers: {
-                "Authorization": `Bearer ${(await token_session.GET_RAW(req.body.unique_key,config_kbank_v2.bank_name)).access_token}`,
+                "Authorization": `Bearer ${(await token_session.GET_RAW(unique_key,config_kbank_v2.bank_name)).access_token}`,
                 "Content-Type": "application/json",
                 "env-id": req.headers['env-id'],
                 "x-test-mode": req.headers['x-test-mode']
             },
-            body: { ...req.body.payload }
+            body: { ...payload }
         }
         const result = await lib.RequestFunction.post(true, endpoint.default.kbank[mode].inquiryAC, obj.headers, obj.body)
         res.status(200).json(result.data)
