@@ -4,8 +4,9 @@ import * as CIMB from '#libs/Functions_CIMB'
 import * as lib from '#libs/Functions'
 import { config_cimb_v2 } from '#API/CIMB/config'
 import { get_init_config, CIMB_TOKEN } from '#cache/redis'
-import { GATEWAY_DB } from '#db/query'
+import { DB_CIMB } from '#db/query'
 import { decodedJWT } from '#middleware/verify_input'
+import * as endpoint from '#constants/api_endpoint'
 
 const router = express.Router()
 router.use(express.json())
@@ -14,13 +15,20 @@ router.use(express.urlencoded({
     defer: true
 }))
 
+const mode = process.env.NODE_ENV
+
 const oAuthTokenV2CIMB = async (req, res, next) => {
-    req.bank_api_path = await lib.bank_api_path()
-    const CONFIGS_INIT = (JSON.parse(await get_init_config(config_cimb_v2.bank_name)))
-        .filter(result => result.coop_key === (configs.MODE !== 'UAT' ? req.body.coop_key : 'egat'))[0]
-    req.body = {
-        ...CONFIGS_INIT,
-        ...req.body
+    //req.bank_api_path = await lib.bank_api_path()
+    try {
+        const CONFIGS_INIT = (JSON.parse(await get_init_config(config_cimb_v2.bank_name)))
+            .filter(result => result.coop_key === (mode !== 'dev' ? req.body.coop_key : 'uat'))[0]
+        req.body = {
+            ...CONFIGS_INIT,
+            ...req.body
+        }
+    } catch (error) {
+        console.error(`[${lib.c_time()}][Authorization] Error => ${error}`)
+        res.status(500).end(`[${lib.c_time()}][Authorization] Error => ${error}`)
     }
     const arg_keys = [
         'public_key',
@@ -51,8 +59,8 @@ const oAuthTokenV2CIMB = async (req, res, next) => {
                         data: CIMB.AESencrypt(aesKey, aesIV, body)
                     }
                 }
-
-                const Encrypted = await lib.RequestFunction.post(false, req.bank_api_path.oAuthTokenV2CIMB, obj.headers, obj.body)
+                
+                const Encrypted = await lib.RequestFunction.post(false, endpoint.default.cimb[mode].oAuthTokenV2CIMB, obj.headers, obj.body , {})
 
                 const Decrypted = CIMB.AESdecrypt(aesKey, aesIV, Encrypted.data.data)
 
@@ -106,13 +114,15 @@ router.post('/inquiryAccountCIMB', decodedJWT, oAuthTokenV2CIMB, async (req, res
                 }
             }
 
-            const InquiryResult = await lib.RequestFunction.post(true, req.bank_api_path.inquiryAccountV2CIMB, obj.headers, obj.body)
+            const InquiryResult = await lib.RequestFunction.post(true, endpoint.default.cimb[mode].inquiryAccountV2CIMB, obj.headers, obj.body , {})
 
             const Decrypted = CIMB.AESdecrypt(aesKey, aesIV, InquiryResult.data.data)
 
             const jsonResponse = JSON.parse(Decrypted.toString())
 
             const result = CIMB.BodyDecrypt(req.body.opay_encrypt_key64, req.body.opay_encrypt_iv64, jsonResponse.data)
+
+            console.log(result)
 
             if (result === undefined) {
                 throw "Decypt error"
@@ -122,7 +132,8 @@ router.post('/inquiryAccountCIMB', decodedJWT, oAuthTokenV2CIMB, async (req, res
             console.error(`[${lib.c_time()}][Inquiry] Error => ${error}`)
             const send_res = {
                 ResponseCode: "CIMBERR02",
-                message: error 
+                message: error,
+                RESULT : false
             }
             res.status(500).json(send_res)
         }
@@ -130,7 +141,8 @@ router.post('/inquiryAccountCIMB', decodedJWT, oAuthTokenV2CIMB, async (req, res
         console.error(`[${lib.c_time()}][Inquiry] Error => Payload not compalte`)
         const send_res = {
             ResponseCode: "CIMBERR01",
-            message: "Payload not compalte"
+            message: "Payload not compalte",
+            RESULT : false
         }
         res.status(500).json(send_res)
     }
@@ -170,7 +182,7 @@ router.post('/confirmFunsTransferCIMB', decodedJWT, oAuthTokenV2CIMB, async (req
                 }
             }
 
-            const ConfirmResult = await lib.RequestFunction.post(true, req.bank_api_path.confirmFunsTransferV2CIMB, obj.headers, obj.body)
+            const ConfirmResult = await lib.RequestFunction.post(true, endpoint.default.cimb[mode].confirmFunsTransferV2CIMB, obj.headers, obj.body , {})
 
             const Decrypted = CIMB.AESdecrypt(aesKey, aesIV, ConfirmResult.data.data)
 
@@ -205,7 +217,7 @@ router.post('/confirmFunsTransferCIMB', decodedJWT, oAuthTokenV2CIMB, async (req
                     log_response: JSON.parse(result)
                 }
 
-                await GATEWAY_DB.SET_LOG(log_payload)
+                await DB_CIMB.ResultLog(log_payload)
                     .then(() => {
                         console.log(`[${lib.c_time()}][Transaction log] Insert sucessfully => ${req.body.ClientTransactionNo}`)
                     })
@@ -227,7 +239,8 @@ router.post('/confirmFunsTransferCIMB', decodedJWT, oAuthTokenV2CIMB, async (req
             console.error(`[${lib.c_time()}][Confirm] Error => ${error}`)
             const send_res = {
                 ResponseCode: "CIMBERR02",
-                message: error
+                message: error,
+                RESULT : false
             }
             res.status(500).json(send_res)
         }
@@ -235,7 +248,8 @@ router.post('/confirmFunsTransferCIMB', decodedJWT, oAuthTokenV2CIMB, async (req
         console.error(`[${lib.c_time()}][Confirm] Error => Payload not compalte`)
         const send_res = {
             ResponseCode: "CIMBERR01",
-            message: "Payload not compalte"
+            message: "Payload not compalte",
+            RESULT : false
         }
         res.status(500).json(send_res)
     }
@@ -272,7 +286,7 @@ router.post('/getStatusV2CIMB' ,decodedJWT, oAuthTokenV2CIMB, async (req, res) =
                 }
             }
 
-            const ConfirmResult = await lib.RequestFunction.post(true, req.bank_api_path.getStatusV2CIMB_, obj.headers, obj.body)
+            const ConfirmResult = await lib.RequestFunction.post(true, endpoint.default.cimb[mode].getStatusV2CIMB_, obj.headers, obj.body)
 
             const Decrypted = CIMB.AESdecrypt(aesKey, aesIV, ConfirmResult.data.data)
 

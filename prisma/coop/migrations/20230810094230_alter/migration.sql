@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE `buffer_history` ADD COLUMN `in_date` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
-    ADD COLUMN `sigma_key` TEXT NULL;

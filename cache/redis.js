@@ -1,16 +1,15 @@
 import Redis from 'ioredis'
 import moment from 'moment'
-import { GATEWAY_DB } from '#db/query'
+import { DB_CIMB} from '#db/query'
 import { config_cimb_v2 } from '#API/CIMB/config'
-import { COOP_DB } from '#db/query'
 import configs from '#constants/configs'
 import { c_time } from '#libs/Functions'
 
 const redisConnection = () => {
     return new Promise((resolve, reject) => {
-        const redis = new Redis({ ...configs.redis })
+        const redis = new Redis({ ...configs[process.env.NODE_ENV].redis })
         redis.on('connect', () => {
-            console.log(`[${c_time()}][Redis] Client Listening on PORT :`, configs.redis.port)
+            console.log(`[${c_time()}][Redis] Client Listening on PORT :`, configs[process.env.NODE_ENV].redis.port)
             resolve(redis)
         })
 
@@ -23,27 +22,12 @@ const redisConnection = () => {
 
 const Client = await redisConnection()
 
-// const Client_sub = await redisConnection()
-
-// Client_sub.subscribe('expireValue', (err, count) => {
-//     if (!err) console.log(`[${c_time()}][CACHE] Subscribe expire started`)
-// })
-
-// Client_sub.on('message', (channel, message) => {
-//     if (channel === 'expireValue') {
-//         const { key, value } = JSON.parse(message)
-//         console.log(`Key "${key}" expired with value "${value}".`)
-//     }
-// })
-
 export const Startup_Config = async () => {
     if (Client.status == 'connect') {
         //Client.configSet("notify-keyspace-events", "Ex")
-        await Client.set('INIT_CONFIGS:CIMB', JSON.stringify(await GATEWAY_DB.GET_INIT_TO_CACHE()))
+        await Client.set('INIT_CONFIGS:CIMB', JSON.stringify(await DB_CIMB.GetBankProvide()))
         const coops = ['PEA', 'IGAT']
         coops.forEach(async (coop) => await Client.set(`CRON_${coop}:STATUS`, '0'))
-        await setEx('test' , '123' , 5)
-        await setEx('test2' , '456' , 5)
     }
     // const sub = Client.duplicate()
     // await sub.connect()

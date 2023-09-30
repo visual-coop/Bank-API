@@ -36,6 +36,6 @@ const server = https.createServer(options,router)
 server.listen(PORT, async () => {
     console.log(`[${c_time()}][API] Server Listening on PORT :`, PORT)
     await radis()
-    console.log(`[${c_time()}][Mode] : ${configs.MODE}`)
+    console.log(`[${c_time()}][Mode] : ${process.env.NODE_ENV === 'dev' ? 'Deverlopment' : 'Production'}`)
 })
 

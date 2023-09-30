@@ -1,18 +1,7 @@
 import axios from 'axios'
 import moment from 'moment'
-import https from 'https'
-import fs from 'fs'
 import { v4 as uuid } from 'uuid'
 import configs from '#constants/configs'
-import { getDirName } from '#libs/helper'
-
-const __dirname = getDirName(import.meta.url)
-
-const httpsAgent = new https.Agent({
-    key: fs.readFileSync(`${__dirname}/../constants/cert/key.pem`),
-    cert: fs.readFileSync(`${__dirname}/../constants/cert/thaicoop_co_2023.crt`),
-    rejectUnauthorized: false
-})
 
 // ===== Util Functions =====
 
@@ -77,6 +66,11 @@ export const pad_amt = (value) => {
     return value_splited[0]
 }
 
+export const fillWithZeros = (str, digi) => {
+    while (str.length < digi) str = '0' + str
+    return str
+  }
+
 export const bank_api_path_ = async () => {
     return (await RequestFunction.get(false, configs.BANK_API_PATH, null, null)).data
 }
@@ -120,11 +114,11 @@ export const RequestFunction = {
                 }
             })
     },
-    async post(isToken = false, url, headers, data, timeout = null, showErr = true) {
+    async post(isToken = false, url, headers, data, { timeout = null , showErr = true , ssl = null  }) {
         if (isToken) headers.Authorization = `${headers.Authorization}`
         return await axios.post(url, {
             ...data
-        }, { headers, timeout: timeout , httpsAgent : httpsAgent})
+        }, { headers , timeout : timeout , httpsAgent : ssl})
             .then((res) => res)
             .catch((error) => {
                 if (!!error.response) {
