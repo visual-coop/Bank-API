@@ -26,7 +26,6 @@ const oAuthTokenV2CIMB = async (req, res, next) => {
             ...CONFIGS_INIT,
             ...req.body
         }
-        console.log(CONFIGS_INIT)
     } catch (error) {
         console.error(`[${lib.c_time()}][Authorization] Error => ${error}`)
         res.status(500).end(`[${lib.c_time()}][Authorization] Error => ${error}`)

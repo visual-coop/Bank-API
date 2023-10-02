@@ -114,7 +114,7 @@ export const buildOPAYRequest = (body) => {
         let ClientTransactionNo, BeneficiaryName = 'INQUIRY', SenderReference = 'INQUIRY'
         if (body.routePath === '/getStatusV2CIMB' || body.routePath === '/confirmFunsTransferCIMB') {
             ClientTransactionNo = body.ClientTransactionNo
-            if (body.routePath === '/confirmFunsTransferCIMB' && configs.MODE === 'PROD') {
+            if (body.routePath === '/confirmFunsTransferCIMB' && process.env.NODE_ENV === 'prod') {
                 BeneficiaryName = body.Beneficiary_Name
                 SenderReference = body.SenderReference
             } else {
