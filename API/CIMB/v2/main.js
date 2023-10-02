@@ -26,6 +26,7 @@ const oAuthTokenV2CIMB = async (req, res, next) => {
             ...CONFIGS_INIT,
             ...req.body
         }
+        console.log(CONFIGS_INIT)
     } catch (error) {
         console.error(`[${lib.c_time()}][Authorization] Error => ${error}`)
         res.status(500).end(`[${lib.c_time()}][Authorization] Error => ${error}`)
@@ -73,11 +74,11 @@ const oAuthTokenV2CIMB = async (req, res, next) => {
             next()
         } catch (error) {
             console.error(`[${lib.c_time()}][Authorization] Error => ${error}`)
-            res.status(500).end(`[${lib.c_time()}][Authorization] Error => ${error}`)
+            res.status(401).end(`[${lib.c_time()}][Authorization] Error => ${error}`)
         }
     } else {
         console.error(`[${lib.c_time()}][Authorization] Error => Payload not compalte`)
-        res.status(500).end(`[${lib.c_time()}][Authorization] Error => Payload not compalte`)
+        res.status(401).end(`[${lib.c_time()}][Authorization] Error => Payload not compalte`)
     }
 }
 
@@ -120,14 +121,25 @@ router.post('/inquiryAccountCIMB', decodedJWT, oAuthTokenV2CIMB, async (req, res
 
             const jsonResponse = JSON.parse(Decrypted.toString())
 
-            const result = CIMB.BodyDecrypt(req.body.opay_encrypt_key64, req.body.opay_encrypt_iv64, jsonResponse.data)
+            const result = JSON.parse(CIMB.BodyDecrypt(req.body.opay_encrypt_key64, req.body.opay_encrypt_iv64, jsonResponse.data))
 
-            console.log(result)
+            if (result === undefined) throw "Decypt error"
 
-            if (result === undefined) {
-                throw "Decypt error"
+            if (result.ResponseCode === '00') {
+                const result_payload = {
+                    RESULT : true,
+                    ...result
+                }
+                res.status(200).json(result_payload)
+            } else {
+                console.log(`[${lib.c_time()}][Inquiry] Failed , CilentTransNo : ${result?.ClientTransactionNo} => ${result?.Description}`)
+                const result_payload = {
+                    RESULT : false,
+                    ...result
+                }
+                res.status(200).json(result_payload)
             }
-            else res.status(200).json(JSON.parse(result))
+
         } catch (error) {
             console.error(`[${lib.c_time()}][Inquiry] Error => ${error}`)
             const send_res = {
@@ -135,7 +147,7 @@ router.post('/inquiryAccountCIMB', decodedJWT, oAuthTokenV2CIMB, async (req, res
                 message: error,
                 RESULT : false
             }
-            res.status(500).json(send_res)
+            res.status(400).json(send_res)
         }
     } else {
         console.error(`[${lib.c_time()}][Inquiry] Error => Payload not compalte`)
@@ -144,7 +156,7 @@ router.post('/inquiryAccountCIMB', decodedJWT, oAuthTokenV2CIMB, async (req, res
             message: "Payload not compalte",
             RESULT : false
         }
-        res.status(500).json(send_res)
+        res.status(400).json(send_res)
     }
 })
 
@@ -188,9 +200,11 @@ router.post('/confirmFunsTransferCIMB', decodedJWT, oAuthTokenV2CIMB, async (req
 
             const jsonResponse = JSON.parse(Decrypted.toString())
 
-            let result = CIMB.BodyDecrypt(req.body.opay_encrypt_key64, req.body.opay_encrypt_iv64, jsonResponse.data)
+            let result = JSON.parse(CIMB.BodyDecrypt(req.body.opay_encrypt_key64, req.body.opay_encrypt_iv64, jsonResponse.data))
 
-            if (result) {
+            if (result === undefined) throw "Decypt error"
+
+            if (result.ResponseCode === '00') {
 
                 const transaction_uuid = lib.gen_sigma_key()
 
@@ -214,27 +228,28 @@ router.post('/confirmFunsTransferCIMB', decodedJWT, oAuthTokenV2CIMB, async (req
                     trans_flag: '-1',
                     coop_key: req.body.coop_key,
                     sigma_key: transaction_uuid,
-                    log_response: JSON.parse(result)
+                    log_response: result
                 }
 
                 await DB_CIMB.ResultLog(log_payload)
-                    .then(() => {
-                        console.log(`[${lib.c_time()}][Transaction log] Insert sucessfully => ${req.body.ClientTransactionNo}`)
-                    })
-                    .catch((error) => {
-                        console.error(`[${lib.c_time()}][Transaction log] Insert error => ${error}`)
-                    })
 
                 await CIMB_TOKEN.DEL(req.body.unique_id)
-                result = JSON.parse(result)
-                const res_payload = {
-                    ...result,
-                    sigma_key : transaction_uuid
+
+                const result_payload = {
+                    RESULT : true,
+                    sigma_key : transaction_uuid,
+                    ...result
                 }
-                res.status(200).json(res_payload)
+                res.status(200).json(result_payload)
             } else {
-                throw "Decypt error"
+                console.log(`[${lib.c_time()}][Inquiry] Failed , CilentTransNo : ${result?.ClientTransactionNo} => ${result?.Description}`)
+                const result_payload = {
+                    RESULT : false,
+                    ...result
+                }
+                res.status(200).json(result_payload)
             }
+
         } catch (error) {
             console.error(`[${lib.c_time()}][Confirm] Error => ${error}`)
             const send_res = {
@@ -242,7 +257,7 @@ router.post('/confirmFunsTransferCIMB', decodedJWT, oAuthTokenV2CIMB, async (req
                 message: error,
                 RESULT : false
             }
-            res.status(500).json(send_res)
+            res.status(400).json(send_res)
         }
     } else {
         console.error(`[${lib.c_time()}][Confirm] Error => Payload not compalte`)
@@ -251,7 +266,7 @@ router.post('/confirmFunsTransferCIMB', decodedJWT, oAuthTokenV2CIMB, async (req
             message: "Payload not compalte",
             RESULT : false
         }
-        res.status(500).json(send_res)
+        res.status(400).json(send_res)
     }
 })
 

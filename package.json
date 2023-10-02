@@ -6,9 +6,9 @@
   "type": "module",
   "scripts": {
     "start-win": "SET NODE_ENV=prod& node ./index.js",
+    "start-unix": "export NODE_ENV=prod && node ./index.js",
     "dev-win": "SET NODE_ENV=dev& nodemon --inspect=0.0.0.0 ./index.js",
-    "dev-prisma": "prisma generate --schema=./prisma/gateway/schema.prisma && pm2-runtime start ./index.js --watch",
-    "gen-prisma": "prisma generate --schema=./prisma/gateway/schema.prisma"
+    "dev-unix": "export NODE_ENV=dev && nodemon --inspect=0.0.0.0 ./index.js"
   },
   "author": "THADTHEP THADSRI",
   "license": "ISC",
