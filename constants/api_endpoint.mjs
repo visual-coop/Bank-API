@@ -8,13 +8,13 @@ export default {
             transferOtherBankAC: "https://openapi-sandbox.kasikornbank.com/v1/fundtransfer/verifydata",
             twoway_ssl : "https://openapi-test.kasikornbank.com/exercise/ssl"
         },
-        UAT: {
+        dev: {
             oAuthV2: "https://openapi-test.kasikornbank.com/v2/oauth/token",
             verifyData: "https://openapi-test.kasikornbank.com/v1/fundtransfer/verifydata",
             fundTransfer: "https://openapi-test.kasikornbank.com/v1/fundtransfer/fundtransfer",
             inqueryTxnStatus: "https://openapi-test.kasikornbank.com/v1/fundtransfer/inqtxnstatus"
         },
-        PROD: {
+        prod: {
             oAuthV2: "https://openapi.kasikornbank.com/v2/oauth/token",
             verifyData: "https://openapi.kasikornbank.com/fundtransfer/verifydata",
             fundTransfer: "https://openapi.kasikornbank.com/fundtransfer/fundtransfer",

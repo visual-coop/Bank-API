@@ -16,6 +16,31 @@ export class DB_KBANK extends DB_GATEWAY {
             throw error
         }
     }
+
+    static ResultLog = async (payload) => {
+        try {
+            const query = `INSERT INTO logtranskbank
+            (
+                log_income,
+                trans_flag,
+                coop_key,
+                sigma_key,
+                log_response
+            ) VALUES ( ?, ?, ?, ?, ?)
+            `
+            const bind = [
+                JSON.stringify(payload.log_income),
+                payload.trans_flag,
+                payload.coop_key,
+                payload.sigma_key,
+                JSON.stringify(payload.log_response)
+            ]
+            const result = await this.mysql.query(query, bind)
+            return result
+        } catch (error) {
+            throw error
+        }
+    }
 }
 
 export class DB_CIMB extends DB_GATEWAY {

@@ -7,7 +7,7 @@ const header = {
             consumer_id: "OO1KnihSPudQzLxxky4zt6ekNApho4lK",
             consumer_secret: "w7vvikhFZhVxxPrl"
         },
-        UAT: {
+        dev: {
             consumer_id: "NcS1V4JDPaFF5OF0xuCqhpY8jaoK9nnt",
             consumer_secret: "NXGYd1iG2j7vlLNe"
         }
