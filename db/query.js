@@ -8,7 +8,7 @@ class DB_CONNECTION {
 export class DB_KBANK {
     static GetPayerInfo = async (coop_key) => {
         try {
-            const query = `SELECT merchant_id,payer_account FROM coop_provide_kbank WHERE coop_key = ?`
+            const query = `SELECT merchant_id,payer_account,service_name FROM coop_provide_kbank WHERE coop_key = ?`
             const bind = [ coop_key ]
             const result = (await DB_CONNECTION.mysql.query(query, bind))[0]
             return result[0]

@@ -60,13 +60,17 @@ API.post('/verifydata', decodedJWT, oAuthV2, async (req, res) => {
                 proxyType: "10",
                 proxyValue: req.body.bank_account_no,
                 requestDateTime: mode === 'dev' ? "2023-10-01T13:36:00.005+07:00" : moment().format('yyyy-MM-DDTHH:mm:ss:SSS+07:00'),
-                senderName: mode === 'dev' ? 'AEROTHAI Saving' : req.body.senderName,
-                senderTaxID: mode === 'dev' ? "1480200025231" : req.body.citizen_id,
+                senderName: payer.service_name,
+                senderTaxID : req.body.citizen_id,
                 toBankCode: "004",
                 transType: "K2K",
                 typeOfSender: "K"
             }
         }
+
+        console.log(moment().format('yyyy-MM-DDTHH:mm:ss:SSS+07:00'))
+        console.log(moment().format('2023-10-01T13:36:00.005+07:00'))
+
         const result = await lib.RequestFunction.post(true, endpoint.default.kbank[mode].verifyData, obj.headers, obj.body, { ssl: KBANK.httpsAgent })
 
         const verify_result = {
