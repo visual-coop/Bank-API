@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CIMB API</title>
+    <title>Isocare system</title>
     <style>
-        body {
+        .head {
             height: 100%;
             display: flex;
             justify-content: center;
@@ -13,9 +14,16 @@
         }
     </style>
 </head>
+<script>
+    fetch('http://139.59.104.170/getMode', { method: 'POST' })
+        .then(async(response) => {
+            document.getElementById("mode").innerHTML = await response.text()
+        })
+</script>
+
 <body>
-    <div>
-        Test
-    </div>
+    <span class="head">** Isocare System / Bank API **</span>
+    <span class="head">Mode :&nbsp;<b id="mode"></b></span>
 </body>
+
 </html>

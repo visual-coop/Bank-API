@@ -10,7 +10,6 @@ import { Startup_Config as radis } from '#cache/redis'
 import configs from '#constants/configs'
 import { c_time } from '#libs/Functions'
 
-
 // INIT
 const PORT = process.env.PORT || configs.api_port
 const router = express()
@@ -23,6 +22,10 @@ router.use('/KBANK/v2',KBANK__api__v2)
 
 router.get('*', (req, res) => {
     res.sendFile(`${__dirname}/src/index.html`)
+})
+
+router.post('/getMode' , (req,res) => {
+    res.send(process.env.NODE_ENV === 'dev' ? 'Deverlopment' : 'Production')
 })
 
 // HTTPS
