@@ -9,7 +9,7 @@ export default {
         'getStatusV2CIMB'
     ],
 
-    api_port : 10003,
+    api_port : 3000,
     
     dev : {
         // DATABASE
