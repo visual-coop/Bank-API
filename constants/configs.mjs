@@ -14,7 +14,7 @@ export default {
     dev : {
         // DATABASE
         redis: {
-            host: '43.229.79.117',
+            host: 'localhost',
             port: 6379,
             password: 'Fs#5132Xcza'
         },
@@ -32,7 +32,7 @@ export default {
     prod : {
         // DATABASE
         redis: {
-            host: '43.229.79.117',
+            host: 'localhost',
             port: 6379,
             password: 'Fs#5132Xcza'
         },
