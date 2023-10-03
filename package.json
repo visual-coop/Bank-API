@@ -9,7 +9,7 @@
     "start-unix": "node ./index.js",
     "dev-win": "SET NODE_ENV=dev& nodemon --inspect=0.0.0.0 ./index.js",
     "set-env-unix" : "export NODE_ENV=dev",
-    "dev-unix": "nodemon --inspect=0.0.0.0 ./index.js"
+    "dev-unix": "export NODE_ENV=dev && nodemon --inspect=0.0.0.0 ./index.js"
   },
   "author": "THADTHEP THADSRI",
   "license": "ISC",
