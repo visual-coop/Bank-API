@@ -21,7 +21,8 @@ router.use('/CIMB/v2',CIMB__api__v2)
 router.use('/KBANK/v2',KBANK__api__v2)
 
 router.get('*', (req, res) => {
-    res.sendFile(`${__dirname}/src/index.html`)
+    res.status(403).end()
+    //res.sendFile(`${__dirname}/src/index.html`)
 })
 
 router.post('/getMode' , (req,res) => {
