@@ -46,7 +46,7 @@ const oAuthV2 = async (req, res, next) => {
 API.post('/verifydata', decodedJWT, oAuthV2, async (req, res) => {
     const { unique_key, coop_key, customerMobileNo } = req.body
     try {
-        const merchant_id = await DB_KBANK.GetMerchantID(coop_key)
+        const payer = await DB_KBANK.GetPayerInfo(coop_key)
         const obj = {
             headers: {
                 "Authorization": `Bearer ${(await token_session.GET_RAW(unique_key, config_kbank_v2.bank_name)).access_token}`,
@@ -54,14 +54,14 @@ API.post('/verifydata', decodedJWT, oAuthV2, async (req, res) => {
             },
             body: {
                 amount: req.body.amount,
-                fromAccountNo: "0481418100", //req.body.deptaccount_no,
-                merchantID: merchant_id,
-                merchantTransID: `${merchant_id}_${moment().format('YYYYMMDD')}_${req.body.ref_no}`,
+                fromAccountNo: payer.payer_account,
+                merchantID: payer.merchant_id,
+                merchantTransID: `${payer.merchant_id}_${moment().format('YYYYMMDD')}_${req.body.ref_no}`,
                 proxyType: "10",
                 proxyValue: req.body.bank_account_no,
-                requestDateTime: mode === 'dev' ? "2022-01-01T13:36:00.005+07:00" : moment().format('yyyy-MM-DDTHH:mm:ss:SSS+07:00'),
-                senderName: req.body.senderName,
-                senderTaxID: req.body.citizen_id,
+                requestDateTime: mode === 'dev' ? "2023-10-01T13:36:00.005+07:00" : moment().format('yyyy-MM-DDTHH:mm:ss:SSS+07:00'),
+                senderName: mode === 'dev' ? 'AEROTHAI Saving' : req.body.senderName,
+                senderTaxID: mode === 'dev' ? "1480200025231" : req.body.citizen_id,
                 toBankCode: "004",
                 transType: "K2K",
                 typeOfSender: "K"

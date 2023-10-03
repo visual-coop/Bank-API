@@ -1,17 +1,17 @@
 import { createPool } from "mysql2/promise"
 import configs from '#constants/configs'
 
-export class DB_GATEWAY {
+class DB_CONNECTION {
     static mysql = createPool({ ...configs[process.env.NODE_ENV].mysqlPool })
 }
 
-export class DB_KBANK extends DB_GATEWAY {
-    static GetMerchantID = async (coop_key) => {
+export class DB_KBANK {
+    static GetPayerInfo = async (coop_key) => {
         try {
-            const query = `SELECT merchant_id FROM coop_provide_kbank WHERE coop_key = ?`
+            const query = `SELECT merchant_id,payer_account FROM coop_provide_kbank WHERE coop_key = ?`
             const bind = [ coop_key ]
-            const result = (await this.mysql.query(query, bind))[0]
-            return result[0].merchant_id
+            const result = (await DB_CONNECTION.mysql.query(query, bind))[0]
+            return result[0]
         } catch (error) {
             throw error
         }
@@ -35,7 +35,7 @@ export class DB_KBANK extends DB_GATEWAY {
                 payload.sigma_key,
                 JSON.stringify(payload.log_response)
             ]
-            const result = await this.mysql.query(query, bind)
+            const result = await DB_CONNECTION.mysql.query(query, bind)
             return result
         } catch (error) {
             throw error
@@ -43,7 +43,7 @@ export class DB_KBANK extends DB_GATEWAY {
     }
 }
 
-export class DB_CIMB extends DB_GATEWAY {
+export class DB_CIMB {
 
     static GetBankProvide = async () => {
         try {
@@ -59,7 +59,7 @@ export class DB_CIMB extends DB_GATEWAY {
             x_apigw_api_id,
             bu_encode
             FROM coop_provide_cimb`
-            const result = (await this.mysql.query(query))[0]
+            const result = (await DB_CONNECTION.mysql.query(query))[0]
             return result
         } catch (error) {
             throw error
@@ -84,7 +84,7 @@ export class DB_CIMB extends DB_GATEWAY {
                 payload.sigma_key,
                 JSON.stringify(payload.log_response)
             ]
-            const result = await this.mysql.query(query, bind)
+            const result = await DB_CONNECTION.mysql.query(query, bind)
             return result
         } catch (error) {
             throw error
