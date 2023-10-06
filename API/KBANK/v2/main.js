@@ -59,7 +59,7 @@ API.post('/verifydata', decodedJWT, oAuthV2, async (req, res) => {
                 merchantTransID: `${payer.merchant_id}_${moment().format('YYYYMMDD')}_${req.body.ref_no}`,
                 proxyType: "10",
                 proxyValue: req.body.bank_account_no,
-                requestDateTime: mode === 'dev' ? "2023-10-01T13:36:00.005+07:00" : moment().format('yyyy-MM-DDTHH:mm:ss:SSS+07:00'),
+                requestDateTime: moment().format('yyyy-MM-DDTHH:mm:ss.SSS+07:00'),
                 senderName: payer.service_name,
                 senderTaxID : req.body.citizen_id,
                 toBankCode: "004",
@@ -68,22 +68,33 @@ API.post('/verifydata', decodedJWT, oAuthV2, async (req, res) => {
             }
         }
 
-        console.log(moment().format('yyyy-MM-DDTHH:mm:ss:SSS+07:00'))
-        console.log(moment().format('2023-10-01T13:36:00.005+07:00'))
-
         const result = await lib.RequestFunction.post(true, endpoint.default.kbank[mode].verifyData, obj.headers, obj.body, { ssl: KBANK.httpsAgent })
 
-        const verify_result = {
-            ACCOUNT_NAME: result.data.toAccNameTH,
-            ACCOUNT_NAME_EN: result.data.toAccNameEN,
-            CUSTOMER_MOBILE_NO: customerMobileNo,
-            REF_KBANK: result.data.merchantTransID,
-            CITIZEN_ID_ENC: result.data.senderTaxID,
-            BANK_ACCOUNT_ENC: result.data.proxyValue,
-            TRAN_ID: result.data.rsTransID,
-            RESULT: true
+        console.log(`[${lib.c_time()}] VerifyData request =>`)
+        console.log(obj)
+
+        console.log(`[${lib.c_time()}] VerifyData response =>`)
+        console.log(result.data)
+
+        if (result.data.responseCode === '0000') {
+            const verify_result = {
+                ACCOUNT_NAME: result.data.toAccNameTH,
+                ACCOUNT_NAME_EN: result.data.toAccNameEN,
+                CUSTOMER_MOBILE_NO: customerMobileNo,
+                REF_KBANK: result.data.merchantTransID,
+                CITIZEN_ID_ENC: result.data.senderTaxID,
+                BANK_ACCOUNT_ENC: result.data.proxyValue,
+                TRAN_ID: result.data.rsTransID,
+                RESULT: true
+            }
+            res.status(200).json(verify_result)
+        } else {
+            const verify_result = {
+                RESULT: false
+            }
+            res.status(200).json(verify_result)
         }
-        res.status(200).json(verify_result)
+        
     } catch (error) {
         console.error(`[${lib.c_time()}][${req.originalUrl}] Error => ${error}`)
         const send_res = {
@@ -109,7 +120,7 @@ API.post('/fundtransfer', decodedJWT, async (req, res) => {
                 customerMobileNo: payload.customerMobileNo,
                 merchantID: merchantID,
                 merchantTransID: payload.merchantTransID,
-                requestDateTime: mode === 'dev' ? "2022-01-01T13:36:00.005+07:00" : moment().format('yyyy-MM-DDTHH:mm:ss:SSS+07:00'),
+                requestDateTime: moment().format('yyyy-MM-DDTHH:mm:ss.SSS+07:00'),
                 rsTransID: payload.rsTransID,
                 ref1: "",
                 ref2: ""
@@ -138,7 +149,7 @@ API.post('/fundtransfer', decodedJWT, async (req, res) => {
             obj.body = {
                 merchantID: merchantID,
                 merchantTransID: payload.merchantTransID,
-                requestDateTime: mode === 'dev' ? "2022-01-01T13:36:00.005+07:00" : moment().format('yyyy-MM-DDTHH:mm:ss:SSS+07:00'),
+                requestDateTime: moment().format('yyyy-MM-DDTHH:mm:ss.SSS+07:00'),
                 rsTransID: payload.rsTransID
             }
 
@@ -163,7 +174,10 @@ API.post('/fundtransfer', decodedJWT, async (req, res) => {
             res.status(200).json(payload_Txn_result)
         }
 
-        console.log(`[${lib.c_time()}] Transfer =>`)
+        console.log(`[${lib.c_time()}] Transfer request =>`)
+        console.log(obj)
+
+        console.log(`[${lib.c_time()}] Transfer response =>`)
         console.log(result.data)
 
         //await token_session.DEL(req.body.unique_key,config_kbank_v2.bank_name)
