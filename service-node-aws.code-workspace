@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../var/www/html/static"
+		},
+		{
+			"path": "../deverlopment/bank-api-ts"
+		}
+	],
+	"settings": {}
+}
