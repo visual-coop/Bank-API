@@ -3,6 +3,10 @@
         "baseUrl": ".",
         "paths": {
             "#API/*": ["./API/*.js", "./API/*.mjs"],
+            "#Routes/*": ["./routes/*.js", "./routes/*.mjs"],
+            "#Controllers/*": ["./controllers/*.js", "./controllers/*.mjs"],
+            "#Services/*": ["./services/*.js", "./services/*.mjs"],
+            "#Utils/*": ["./utility/*.js", "./utility/*.mjs"],
             "#db/*": ["./db/*.js", "./db/*.mjs"],
             "#libs/*": ["./libs/*.js", "./libs/*.mjs"],
             "#cache/*": ["./cache/*.js", "./cache/*.mjs"],
