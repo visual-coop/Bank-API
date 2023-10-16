@@ -4,6 +4,7 @@ import secret_key from '#constants/key'
 
 export const decodedJWT = (req, res, next) => {
     if (lib.checkCompleteArgument(['verify_token', 'app_id'], req.body)) {
+        
         try {
             jwt.verify(req.body.verify_token, secret_key[req.body.app_id], (err, result) => {
                 if (err) {

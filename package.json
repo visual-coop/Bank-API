@@ -27,7 +27,6 @@
     "node-forge": "^1.3.1",
     "redis": "^4.6.7",
     "sjcl": "^1.0.8",
-    "typedi": "^0.10.0",
     "uuidv4": "^6.2.13"
   },
   "imports": {
@@ -35,6 +34,7 @@
     "#Routes/*": "./routes/*.js",
     "#Controllers/*": "./controllers/*.js",
     "#Services/*": "./services/*.js",
+    "#Utils/*": "./utils/*.js",
     "#db/*": "./db/*.js",
     "#libs/*": "./libs/*.js",
     "#cache/*": "./cache/*.js",

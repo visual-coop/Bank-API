@@ -5,7 +5,7 @@ export class InitializeController {
         res.status(403).end()
     }
 
-    getMode () {
+    getMode (req,res) {
         res.send(process.env.NODE_ENV === 'dev' ? 'Deverlopment' : 'Production')
     }
 

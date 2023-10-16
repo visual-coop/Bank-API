@@ -1,5 +1,6 @@
 import Redis from 'ioredis'
 import { promisify } from 'util'
+import { c_time } from '#Utils/utility.func'
 import configs from '#constants/configs'
 
 const redisConnection = () => {
@@ -17,10 +18,11 @@ const redisConnection = () => {
     })
 }
 
-const Client = await redisConnection()
+const redisClient = await redisConnection()
 
-const getAsync = promisify(Client.get).bind(Client)
-const setAsync = promisify(Client.set).bind(Client)
-const setExAsync = promisify(Client.setex).bind(Client)
+const getAsync = promisify(redisClient.get).bind(redisClient)
+const setAsync = promisify(redisClient.set).bind(redisClient)
+const setExAsync = promisify(redisClient.setex).bind(redisClient)
+const delCache = promisify(redisClient.del).bind(redisClient)
 
-export { getAsync, setAsync, setExAsync }
+export { redisClient, getAsync, setAsync, setExAsync ,delCache }

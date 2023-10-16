@@ -1,13 +1,30 @@
 import CryptoJS from "crypto-js"
 import https from 'https'
 import fs from 'fs'
-import { getDirName } from '#libs/helper'
+import { getDirName } from "#Utils/helper"
+
+export const constants = {
+    bankNameTH : "ธนาคารกสิกรไทย จำกัด (มหาชน)",
+    bankNameEN : "Kasikornbank Public Company Limited",
+    bankNameInit : "kbank",
+    bankCode : '004',
+    credentials : {
+        sandbox: {
+            consumer_id: "OO1KnihSPudQzLxxky4zt6ekNApho4lK",
+            consumer_secret: "w7vvikhFZhVxxPrl"
+        },
+        dev: {
+            consumer_id: "NcS1V4JDPaFF5OF0xuCqhpY8jaoK9nnt",
+            consumer_secret: "NXGYd1iG2j7vlLNe"
+        }
+    }
+}
 
 const __dirname = getDirName(import.meta.url)
 
 export const httpsAgent = new https.Agent({
-    key: fs.readFileSync(`${__dirname}/../../constants/cert/key.pem`),
-    cert: fs.readFileSync(`${__dirname}/../../constants/cert/thaicoop_co_2023.crt`),
+    key: fs.readFileSync(`${__dirname}/../constants/cert/key.pem`),
+    cert: fs.readFileSync(`${__dirname}/../constants/cert/thaicoop_co_2023.crt`),
     rejectUnauthorized: false
 })
 

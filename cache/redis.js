@@ -66,10 +66,10 @@ export const setEx = async (key, value, ttl) => {
 
 export const token_session = {
     type: 'SESSION_TRANS',
-    async SET (uuid,bank,token) {
+    async SET (uuid,bank,token,timeout) {
         await Client.setex(
             `${this.type}:${bank}:${uuid}`,
-            28 * 60, //  28 Minute
+            timeout ?? 28 * 60 , //  28 Minute
             JSON.stringify(token)
         )
     },
