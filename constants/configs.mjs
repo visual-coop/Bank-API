@@ -2,6 +2,7 @@ export default {
     SERVER_PORT : 10003,
     
     dev : {
+        LOG_FORMAT : 'dev',
         redis: {
             host: 'localhost',
             port: 6379,
@@ -19,6 +20,7 @@ export default {
         },
     },
     prod : {
+        LOG_FORMAT : 'combined',
         redis: {
             host: 'localhost',
             port: 6379,

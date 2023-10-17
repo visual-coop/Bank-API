@@ -9,10 +9,11 @@ const mode = process.env.NODE_ENV
 const session = new SessionManager()
 
 export const oAuthV2KBNAK = async (req, res, next) => {
+    const bankNameInit = kbank.constants.bankNameInit.toUpperCase()
     const credential = `${kbank.constants.credentials[mode].consumer_id}:${kbank.constants.credentials[mode].consumer_secret}`
 
     try {
-        if (await session.getStatus(req.body.unique_key, kbank.constants.bankNameInit)) {
+        if (await session.getStatus(req.body.unique_key, bankNameInit)) {
             const obj = {
                 headers: {
                     "Authorization": `Basic ${kbank.Base64Encoded(credential)}`,
@@ -23,7 +24,7 @@ export const oAuthV2KBNAK = async (req, res, next) => {
                 }
             }
             const result = await RequestFunction.post(true, endpoint.default.kbank[mode].oAuthV2, obj.headers, obj.body, { ssl: kbank.httpsAgent })
-            await session.set(req.body.unique_key, kbank.constants.bankNameInit, result.data)
+            await session.set(req.body.unique_key, bankNameInit, result.data)
         }
         next()
     } catch (error) {
@@ -35,7 +36,7 @@ export const oAuthV2KBNAK = async (req, res, next) => {
 export const oAuthV2CIMB = async (req, res, next) => {
     const bankNameInit = cimb.constants.bankNameInit.toUpperCase()
     try {
-        const constantsInit = await new CIMBServices().constantsInit(req.body.coop_key,bankNameInit)
+        const constantsInit = await new CIMBServices().constantsInit(bankNameInit)
         req.body = {
             ...constantsInit,
             ...req.body

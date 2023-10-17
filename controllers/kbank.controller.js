@@ -1,9 +1,11 @@
 import { RequestFunction, c_time } from "#Utils/utility.func"
 import { SessionManager } from "#Services/redis.service"
 import { KBANKService } from "#Services/banks.service"
+import { logger } from "#Utils/logger"
 import * as kbank from "#Utils/kbank.func"
 import * as endpoint from "#constants/endpoints"
 import moment from "moment"
+
 
 export class KBANKController {
 
