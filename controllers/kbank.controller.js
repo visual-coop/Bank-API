@@ -6,7 +6,6 @@ import * as kbank from "#Utils/kbank.func"
 import * as endpoint from "#constants/endpoints"
 import moment from "moment"
 
-
 export class KBANKController {
 
     #mode = process.env.NODE_ENV
@@ -72,7 +71,7 @@ export class KBANKController {
             }
 
         } catch (error) {
-            console.error(`[${c_time()}][${req.originalUrl}] Error => ${error}`)
+            logger.error(error)
             const send_res = {
                 ResponseCode: "KBANKERR02",
                 message: error,
@@ -165,7 +164,7 @@ export class KBANKController {
             await this.#session.endSession(req.body.unique_key,this.#bankNameInit)
 
         } catch (error) {
-            console.error(`[${c_time()}][${req.originalUrl}] Error => ${error}`)
+            logger.error(error)
             const send_res = {
                 ResponseCode: "KTBERR02",
                 message: error

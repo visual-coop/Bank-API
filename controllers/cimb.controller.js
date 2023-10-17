@@ -3,6 +3,7 @@ import { SessionManager } from "#Services/redis.service"
 import { CIMBServices } from "#Services/banks.service"
 import * as cimb from "#Utils/cimb.func"
 import * as endpoint from "#constants/endpoints"
+import { logger } from "#Utils/logger"
 
 export class CIMBContoller {
 
@@ -69,7 +70,7 @@ export class CIMBContoller {
                     res.status(200).json(result_payload)
                 }
             } catch (error) {
-                console.error(`[${c_time()}][Inquiry] Error => ${error}`)
+                logger.error(error)
                 const send_res = {
                     ResponseCode: "CIMBERR02",
                     message: error,
@@ -78,7 +79,7 @@ export class CIMBContoller {
                 res.status(400).json(send_res)
             }
         } else {
-            console.error(`[${c_time()}][Inquiry] Error => Payload not compalte`)
+            logger.error("Payload not compalte")
             const send_res = {
                 ResponseCode: "CIMBERR01",
                 message: "Payload not compalte",
@@ -175,7 +176,7 @@ export class CIMBContoller {
                     }
                     res.status(200).json(result_payload)
                 } else {
-                    console.log(`[${c_time()}][Inquiry] Failed , CilentTransNo : ${result?.ClientTransactionNo} => ${result?.Description}`)
+                    logger.error(`Inquiry failed => CilentTransNo : ${result?.ClientTransactionNo} , ${result?.Description}`)
                     const result_payload = {
                         RESULT: false,
                         ...result
@@ -184,7 +185,7 @@ export class CIMBContoller {
                 }
 
             } catch (error) {
-                console.error(`[${c_time()}][Confirm] Error => ${error}`)
+                logger.error(error)
                 const send_res = {
                     ResponseCode: "CIMBERR02",
                     message: error,
@@ -193,7 +194,7 @@ export class CIMBContoller {
                 res.status(400).json(send_res)
             }
         } else {
-            console.error(`[${c_time()}][Confirm] Error => Payload not compalte`)
+            logger.error("Payload not compalte")
             const send_res = {
                 ResponseCode: "CIMBERR01",
                 message: "Payload not compalte",
@@ -254,7 +255,7 @@ export class CIMBContoller {
                 }
     
             } catch (error) {
-                console.error(`[${c_time()}][Get status] Error => ${error}`)
+                logger.error(error)
                 const send_res = {
                     ResponseCode: "CIMBERR02",
                     message: error
@@ -262,7 +263,7 @@ export class CIMBContoller {
                 res.status(500).json(send_res)
             }
         } else {
-            console.error(`[${c_time()}][Get status] Error => Payload not compalte`)
+            logger.error("Payload not compalte")
             const send_res = {
                 ResponseCode: "CIMBERR01",
                 message: "Payload not compalte"

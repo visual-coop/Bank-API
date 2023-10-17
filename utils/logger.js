@@ -46,12 +46,12 @@ const logger = winston.createLogger({
     new winston.transports.Console({
       format: winston.format.combine(winston.format.splat(), winston.format.colorize()),
     }),
-  );
+  )
   
   const stream = {
     write : (message) => {
       logger.info(message.substring(0, message.lastIndexOf('\n')));
     },
-  };
+  }
   
   export { logger, stream }

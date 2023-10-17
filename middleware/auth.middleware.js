@@ -4,6 +4,7 @@ import { CIMBServices } from "#Services/banks.service"
 import * as kbank from "#Utils/kbank.func"
 import * as cimb from "#Utils/cimb.func"
 import * as endpoint from "#constants/endpoints"
+import { logger } from "#Utils/logger"
 
 const mode = process.env.NODE_ENV
 const session = new SessionManager()
@@ -28,7 +29,7 @@ export const oAuthV2KBNAK = async (req, res, next) => {
         }
         next()
     } catch (error) {
-        console.error(`[${c_time()}][Authorization] Unauthorized => ${error}`)
+        logger.error(error)
         res.status(400).end(`[${c_time()}][Authorization] Unauthorized => ${error}`)
     }
 }
@@ -42,7 +43,7 @@ export const oAuthV2CIMB = async (req, res, next) => {
             ...req.body
         }
     } catch (error) {
-        console.error(`[${c_time()}][Authorization] Error => ${error}`)
+        logger.error(error)
         res.status(500).end(`[${c_time()}][Authorization] Error => ${error}`)
     }
     const arg_keys = [
@@ -85,11 +86,11 @@ export const oAuthV2CIMB = async (req, res, next) => {
             }
             next()
         } catch (error) {
-            console.error(`[${c_time()}][Authorization] Error => ${error}`)
+            logger.error(error)
             res.status(401).end(`[${c_time()}][Authorization] Error => ${error}`)
         }
     } else {
-        console.error(`[${c_time()}][Authorization] Error => Payload not compalte`)
+        logger.error(error)
         res.status(401).end(`[${c_time()}][Authorization] Error => Payload not compalte`)
     }
 }
