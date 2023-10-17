@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken"
 import secret_key from '#constants/key'
-import { checkCompleteArgument, c_time } from "#Utils/utility.func"
+import { checkCompleteArgument, c_time, getLastPathSegment } from "#Utils/utility.func"
 
 export const verifyInput = (req, res, next) => {
     if (checkCompleteArgument(['verify_token', 'app_id'], req.body)) {
@@ -11,6 +11,7 @@ export const verifyInput = (req, res, next) => {
                     res.status(500).end(`[${c_time()}][Authorization] Error => Verify token Error`)
                 }
                 req.body = result
+                req.body.routePath = getLastPathSegment(req.route.path) 
                 next()
             })
         } catch (e) {

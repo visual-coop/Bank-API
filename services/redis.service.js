@@ -10,12 +10,16 @@ export class RedisService {
             await setAsync('INIT_CONFIGS:CIMB',JSON.stringify(await this.cimb.getBankProvide()))
         }
     }
+
+    static getinitializeCache = async (payload) => {
+        return await getAsync(`INIT_CONFIGS:${payload}`)
+    }
 }
 
 export class SessionManager {
     type = "SESSION_TRANS"
 
-    set = async (uuid, bank, token, timeout) => {
+    set = async (uuid, bank, token, timeout = null) => {
         await setExAsync(
             `${this.type}:${bank}:${uuid}`,
             timeout ?? 28 * 60,
@@ -23,6 +27,11 @@ export class SessionManager {
         )
     }
 
+    /**
+     * If it's null will return be 'true'
+     * @date 10/16/2023 - 3:27:03 PM
+     *
+     * **/
     getStatus = async (uuid,bank) => {
         if (await getAsync(`${this.type}:${bank}:${uuid}`) === null) return true
     }

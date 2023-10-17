@@ -69,14 +69,14 @@ export const pad_amt = (value) => {
 export const fillWithZeros = (str, digi) => {
     while (str.length < digi) str = '0' + str
     return str
-  }
+}
 
 export const bank_api_path_ = async () => {
     return (await RequestFunction.get(false, configs.BANK_API_PATH, null, null)).data
 }
 
 export const bank_api_path = async () => {
-    const urls = (await RequestFunction.get(false, configs.BANK_API_PATH, null, null)).data,result = {}
+    const urls = (await RequestFunction.get(false, configs.BANK_API_PATH, null, null)).data, result = {}
     if (configs.MODE === 'PROD') {
         for (const key of configs.BANK_API_PATH_SELECT) {
             if (urls.hasOwnProperty(key)) {
@@ -91,6 +91,11 @@ export const bank_api_path = async () => {
         }
     }
     return result
+}
+
+export const getLastPathSegment = (path) => {
+    const pathSegments = path.split('/')
+    return  `/${pathSegments[pathSegments.length - 1]}`
 }
 
 // ===== Request API =====
@@ -114,11 +119,11 @@ export const RequestFunction = {
                 }
             })
     },
-    async post(isToken = false, url, headers, data, { timeout = null , showErr = true , ssl = null  }) {
+    async post(isToken = false, url, headers, data, { timeout = null, showErr = true, ssl = null }) {
         if (isToken) headers.Authorization = `${headers.Authorization}`
         return await axios.post(url, {
             ...data
-        }, { headers , timeout : timeout , httpsAgent : ssl})
+        }, { headers, timeout: timeout, httpsAgent: ssl })
             .then((res) => res)
             .catch((error) => {
                 if (!!error.response) {

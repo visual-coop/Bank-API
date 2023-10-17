@@ -7,10 +7,10 @@ import moment from "moment"
 
 export class KBANKController {
 
-    mode = process.env.NODE_ENV
-
-    session = new SessionManager()
-    service = new KBANKService()
+    #mode = process.env.NODE_ENV
+    #session = new SessionManager()
+    #service = new KBANKService()
+    #bankNameInit = kbank.constants.bankNameInit.toUpperCase()
 
     /**
      * verifyData (Inquiry data)
@@ -20,10 +20,10 @@ export class KBANKController {
     verifyData = async (req, res) => {
         const { unique_key, coop_key, customerMobileNo } = req.body
         try {
-            const payer = await this.service.GetPayerInfo(coop_key)
+            const payer = await this.#service.GetPayerInfo(coop_key)
             const obj = {
                 headers: {
-                    "Authorization": `Bearer ${(await this.session.getAuth(unique_key, kbank.constants.bankNameInit))}`,
+                    "Authorization": `Bearer ${(await this.#session.getAuth(unique_key, this.#bankNameInit))}`,
                     "Content-Type": "application/json",
                 },
                 body: {
@@ -42,7 +42,7 @@ export class KBANKController {
                 }
             }
 
-            const result = await RequestFunction.post(true, endpoint.default.kbank[this.mode].verifyData, obj.headers, obj.body, { ssl: kbank.httpsAgent })
+            const result = await RequestFunction.post(true, endpoint.default.kbank[this.#mode].verifyData, obj.headers, obj.body, { ssl: kbank.httpsAgent })
 
             console.log(`[${c_time()}] VerifyData request =>`)
             console.log(obj)
@@ -89,10 +89,10 @@ export class KBANKController {
         const { exp, sigma_key, coop_key, amt_transfer, ...payload } = req.body
         const merchantID = payload.merchantTransID.match(/^([A-Z]+)_/)[1]
         try {
-            if (await this.session.getStatus(req.body.sigma_key, kbank.constants.bankNameInit)) throw "Unauthorized"
+            if (await this.#session.getStatus(req.body.sigma_key, this.#bankNameInit)) throw "Unauthorized"
             const obj = {
                 headers: {
-                    "Authorization": `Bearer ${(await this.session.getAuth(req.body.sigma_key, kbank.constants.bankNameInit))}`,
+                    "Authorization": `Bearer ${(await this.#session.getAuth(req.body.sigma_key, this.#bankNameInit))}`,
                     "Content-Type": "application/json",
                 },
                 body: {
@@ -106,7 +106,7 @@ export class KBANKController {
                 }
             }
 
-            const result = await RequestFunction.post(true, endpoint.default.kbank[this.mode].fundTransfer, obj.headers, obj.body, { ssl: kbank.httpsAgent })
+            const result = await RequestFunction.post(true, endpoint.default.kbank[this.#mode].fundTransfer, obj.headers, obj.body, { ssl: kbank.httpsAgent })
 
             if (result.data.responseCode === '0000') {
                 const payload_verify_result = {
@@ -121,7 +121,7 @@ export class KBANKController {
                     log_response: result.data
                 }
 
-                await this.service.transLog(db_log_payload)
+                await this.#service.transLog(db_log_payload)
 
                 res.status(200).json(payload_verify_result)
             } else {
@@ -132,7 +132,7 @@ export class KBANKController {
                     rsTransID: payload.rsTransID
                 }
 
-                const Txn_result = await RequestFunction.post(true, endpoint.default.kbank[this.mode].inqueryTxnStatus, obj.headers, obj.body, { ssl: kbank.httpsAgent })
+                const Txn_result = await RequestFunction.post(true, endpoint.default.kbank[this.#mode].inqueryTxnStatus, obj.headers, obj.body, { ssl: kbank.httpsAgent })
 
                 const payload_Txn_result = {
                     RESPONSE_CODE: Txn_result.data.responseCode,
@@ -148,7 +148,7 @@ export class KBANKController {
                     log_response: Txn_result.data
                 }
 
-                await this.service.transLog(db_log_payload)
+                await this.#service.transLog(db_log_payload)
 
                 res.status(200).json(payload_Txn_result)
             }
@@ -160,6 +160,7 @@ export class KBANKController {
             console.log(result.data)
 
             //await token_session.DEL(req.body.unique_key,config_kbank_v2.bank_name)
+            await this.#session.endSession(req.body.unique_key,this.#bankNameInit)
 
         } catch (error) {
             console.error(`[${c_time()}][${req.originalUrl}] Error => ${error}`)
