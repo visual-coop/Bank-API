@@ -35,11 +35,7 @@
     "#Controllers/*": "./controllers/*.js",
     "#Services/*": "./services/*.js",
     "#Utils/*": "./utils/*.js",
-    "#db/*": "./db/*.js",
-    "#libs/*": "./libs/*.js",
-    "#cache/*": "./cache/*.js",
     "#constants/*": "./constants/*.mjs",
-    "#constants/crons": "./constants/crons_config.json",
     "#middleware/*": "./middleware/*.js"
   }
 }

@@ -2,12 +2,12 @@ import express from 'express'
 import cors from 'cors'
 import https from 'https'
 import fs from 'fs'
+import configs from '#constants/configs'
 import { RedisService } from '#Services/redis.service'
-import { getDirName } from '#libs/helper'
 import { InitializeRoute } from '#Routes/initialize.route'
 import { BanksRoute } from '#Routes/banks.route'
-import configs from '#constants/configs'
-import { c_time } from '#libs/Functions'
+import { c_time } from '#Utils/utility.func'
+import { getDirName } from '#Utils/helper'
 
 class Server {
 
@@ -15,7 +15,7 @@ class Server {
 
     constructor() {
         this.app = express()
-        this.port = process.env.PORT || configs.api_port
+        this.port = process.env.PORT || configs.SERVER_PORT
         this.#initializeMiddlewares()
         this.#initializeRoutes()
         new RedisService().initializeCache()

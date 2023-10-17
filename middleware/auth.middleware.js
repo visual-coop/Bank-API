@@ -3,7 +3,7 @@ import { SessionManager } from "#Services/redis.service"
 import { CIMBServices } from "#Services/banks.service"
 import * as kbank from "#Utils/kbank.func"
 import * as cimb from "#Utils/cimb.func"
-import * as endpoint from "#constants/api_endpoint"
+import * as endpoint from "#constants/endpoints"
 
 const mode = process.env.NODE_ENV
 const session = new SessionManager()

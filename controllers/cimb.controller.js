@@ -2,7 +2,7 @@ import { RequestFunction, c_time, genGUID, checkCompleteArgument, gen_sigma_key,
 import { SessionManager } from "#Services/redis.service"
 import { CIMBServices } from "#Services/banks.service"
 import * as cimb from "#Utils/cimb.func"
-import * as endpoint from "#constants/api_endpoint"
+import * as endpoint from "#constants/endpoints"
 
 export class CIMBContoller {
 
