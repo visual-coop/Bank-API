@@ -36,7 +36,7 @@ export const oAuthV2KBNAK = async (req, res, next) => {
 export const oAuthV2CIMB = async (req, res, next) => {
     const bankNameInit = cimb.constants.bankNameInit.toUpperCase()
     try {
-        const constantsInit = await new CIMBServices().constantsInit(bankNameInit)
+        const constantsInit = await new CIMBServices().constantsInit(req.body.coop_key,bankNameInit)
         req.body = {
             ...constantsInit,
             ...req.body
