@@ -1,7 +1,6 @@
-import { RequestFunction, c_time } from "#Utils/utility.func"
+import { RequestFunction } from "#Utils/utility.func"
 import { SessionManager } from "#Services/redis.service"
 import { KBANKService } from "#Services/banks.service"
-import { logger } from "#Utils/logger"
 import * as kbank from "#Utils/kbank.func"
 import * as endpoint from "#constants/endpoints"
 import moment from "moment"
@@ -18,7 +17,7 @@ export class KBANKController {
      * Last edit @date 10/16/2023 - 5:01:56 AM by Thadthep thadsri
      *
      * **/
-    verifyData = async (req, res) => {
+    verifyData = async (req, res, next) => {
         const { unique_key, coop_key, customerMobileNo } = req.body
         try {
             const payer = await this.#service.GetPayerInfo(coop_key)
@@ -45,12 +44,6 @@ export class KBANKController {
 
             const result = await RequestFunction.post(true, endpoint.default.kbank[this.#mode].verifyData, obj.headers, obj.body, { ssl: kbank.httpsAgent })
 
-            console.log(`[${c_time()}] VerifyData request =>`)
-            console.log(obj)
-
-            console.log(`[${c_time()}] VerifyData response =>`)
-            console.log(result.data)
-
             if (result.data.responseCode === '0000') {
                 const verify_result = {
                     ACCOUNT_NAME: result.data.toAccNameTH,
@@ -71,13 +64,7 @@ export class KBANKController {
             }
 
         } catch (error) {
-            logger.error(error)
-            const send_res = {
-                ResponseCode: "KBANKERR02",
-                message: error,
-                RESULT: false
-            }
-            res.status(500).json(send_res)
+            next(error)
         }
     }
 
@@ -86,7 +73,7 @@ export class KBANKController {
      * Last edit @date 10/16/2023 - 4:59:04 AM by Thadthep thadsri
      *
      * **/
-    fundtransfer = async (req, res) => {
+    fundtransfer = async (req, res, next) => {
         const { exp, sigma_key, coop_key, amt_transfer, ...payload } = req.body
         const merchantID = payload.merchantTransID.match(/^([A-Z]+)_/)[1]
         try {
@@ -154,23 +141,10 @@ export class KBANKController {
                 res.status(200).json(payload_Txn_result)
             }
 
-            console.log(`[${c_time()}] Transfer request =>`)
-            console.log(obj)
-
-            console.log(`[${c_time()}] Transfer response =>`)
-            console.log(result.data)
-
-            //await token_session.DEL(req.body.unique_key,config_kbank_v2.bank_name)
             await this.#session.endSession(req.body.unique_key,this.#bankNameInit)
 
         } catch (error) {
-            logger.error(error)
-            const send_res = {
-                ResponseCode: "KTBERR02",
-                message: error
-            }
-            if (error === 'Unauthorized') res.status(401).json(send_res)
-            else res.status(400).json(send_res)
+            next(error)
         }
     }
 }

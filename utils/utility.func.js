@@ -1,6 +1,7 @@
+import { HttpException } from '#Exceptions/HttpException'
+import { v4 as uuid } from 'uuid'
 import axios from 'axios'
 import moment from 'moment'
-import { v4 as uuid } from 'uuid'
 import configs from '#constants/configs'
 
 // ===== Util Functions =====
@@ -35,8 +36,7 @@ export const checkCompleteArgument = (arg_keys, payload) => {
         if (payload.hasOwnProperty(key)) {
             if (payload[key] === '' || payload[key] === null || payload[key] === undefined || payload[key] === 'undefined') {
                 result = false
-                console.log(`[Payload arg error] => name : ${key} , type : ${typeof payload[key]} , value : ${payload[key]}`)
-                return
+                throw new HttpException(400, `[Payload arg error] => name : ${key} , type : ${typeof payload[key]} , value : ${payload[key]}`)
             }
         }
     })
@@ -110,11 +110,9 @@ export const RequestFunction = {
             .catch((error) => {
                 if (showErr) {
                     if (!!error.response) {
-                        console.log(error.response.data)
-                        throw (handleError(error.response.status))
+                        throw new HttpException(error.response.status,error.response.data)
                     } else {
-                        console.log(error)
-                        throw (handleError('etc'))
+                        throw new HttpException(408,'Request Timeout')
                     }
                 }
             })
@@ -127,13 +125,9 @@ export const RequestFunction = {
             .then((res) => res)
             .catch((error) => {
                 if (!!error.response) {
-                    if (showErr) console.log(error.response.data)
-
-                    throw (handleError(error.response.status))
+                    throw new HttpException(error.response.status,error.response.data)
                 } else {
-                    if (showErr) console.log(error)
-
-                    throw (handleError(408))
+                    throw new HttpException(408,'Request Timeout')
                 }
             })
     }

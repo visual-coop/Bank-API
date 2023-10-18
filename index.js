@@ -12,6 +12,7 @@ import { InitializeRoute } from '#Routes/initialize.route'
 import { BanksRoute } from '#Routes/banks.route'
 import { getDirName } from '#Utils/helper'
 import { stream , logger } from '#Utils/logger'
+import { ErrorMiddleware } from '#middleware/error.middleware'
 
 class Server {
 
@@ -23,10 +24,12 @@ class Server {
         this.port = process.env.PORT || configs.SERVER_PORT
         this.#initializeMiddlewares()
         this.#initializeRoutes()
-        new RedisService().initializeCache()
+        this.#initializeCache()
+        this.#initializeErrorHandling()
     }
 
     #initializeMiddlewares() {
+        this.app.use(ErrorMiddleware)
         this.app.use(morgan(configs[this.#mode].LOG_FORMAT, { stream }))
         this.app.use(cors({ origin: '*', credentials: true }))
         this.app.use(hpp())
@@ -39,6 +42,14 @@ class Server {
     #initializeRoutes() {
         this.app.use('/', new InitializeRoute().router)
         this.app.use('/', new BanksRoute().router)
+    }
+
+    #initializeErrorHandling() {
+        this.app.use(ErrorMiddleware)
+    }
+
+    #initializeCache() {
+        new RedisService().initializeCache()
     }
 
     listen() {

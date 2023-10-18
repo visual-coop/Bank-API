@@ -7,6 +7,7 @@
             "#Controllers/*": ["./controllers/*.js", "./controllers/*.mjs"],
             "#Services/*": ["./services/*.js", "./services/*.mjs"],
             "#Utils/*": ["./utils/*.js", "./utils/*.mjs"],
+            "#Exceptions/*": ["./exceptions/*.js", "./exceptions/*.mjs"],
             "#constants/*": ["./constants/*.js", "./constants/*.mjs"],
             "#middleware/*": ["./middleware/*.js", "./middleware/*.mjs"]
         }

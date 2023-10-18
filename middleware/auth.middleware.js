@@ -1,10 +1,10 @@
 import { RequestFunction , c_time, genGUID, checkCompleteArgument } from "#Utils/utility.func"
 import { SessionManager } from "#Services/redis.service"
 import { CIMBServices } from "#Services/banks.service"
+import { HttpException } from "#Exceptions/HttpException"
 import * as kbank from "#Utils/kbank.func"
 import * as cimb from "#Utils/cimb.func"
 import * as endpoint from "#constants/endpoints"
-import { logger } from "#Utils/logger"
 
 const mode = process.env.NODE_ENV
 const session = new SessionManager()
@@ -29,8 +29,7 @@ export const oAuthV2KBNAK = async (req, res, next) => {
         }
         next()
     } catch (error) {
-        logger.error(error)
-        res.status(400).end(`[${c_time()}][Authorization] Unauthorized => ${error}`)
+        next(new HttpException(401, `Authentication token error ${error}`))
     }
 }
 
@@ -43,8 +42,7 @@ export const oAuthV2CIMB = async (req, res, next) => {
             ...req.body
         }
     } catch (error) {
-        logger.error(error)
-        res.status(500).end(`[${c_time()}][Authorization] Error => ${error}`)
+        next(new HttpException(401, `Authentication token error ${error}`))
     }
     const arg_keys = [
         'public_key',
@@ -86,12 +84,10 @@ export const oAuthV2CIMB = async (req, res, next) => {
             }
             next()
         } catch (error) {
-            logger.error(error)
-            res.status(401).end(`[${c_time()}][Authorization] Error => ${error}`)
+            next(new HttpException(401, `Authentication token error ${error}`))
         }
     } else {
-        logger.error(error)
-        res.status(401).end(`[${c_time()}][Authorization] Error => Payload not compalte`)
+        next(new HttpException(400, `Payload not complete`))
     }
 }
 

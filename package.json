@@ -41,6 +41,7 @@
     "#Controllers/*": "./controllers/*.js",
     "#Services/*": "./services/*.js",
     "#Utils/*": "./utils/*.js",
+    "#Exceptions/*": "./exceptions/*.js",
     "#constants/*": "./constants/*.mjs",
     "#middleware/*": "./middleware/*.js"
   }

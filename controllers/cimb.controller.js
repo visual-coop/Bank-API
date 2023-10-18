@@ -1,9 +1,9 @@
 import { RequestFunction, c_time, genGUID, checkCompleteArgument, gen_sigma_key, formatMysqlDate, pad_amt } from "#Utils/utility.func"
+import { HttpException } from "#Exceptions/HttpException"
 import { SessionManager } from "#Services/redis.service"
 import { CIMBServices } from "#Services/banks.service"
 import * as cimb from "#Utils/cimb.func"
 import * as endpoint from "#constants/endpoints"
-import { logger } from "#Utils/logger"
 
 export class CIMBContoller {
 
@@ -12,7 +12,7 @@ export class CIMBContoller {
     #service = new CIMBServices()
     #bankNameInit = cimb.constants.bankNameInit.toUpperCase()
 
-    inquiryAccountCIMB = async (req, res) => {
+    inquiryAccountCIMB = async (req, res, next) => {
         const arg_keys = [
             'opay_encrypt_key64',
             'opay_encrypt_iv64',
@@ -70,26 +70,14 @@ export class CIMBContoller {
                     res.status(200).json(result_payload)
                 }
             } catch (error) {
-                logger.error(error)
-                const send_res = {
-                    ResponseCode: "CIMBERR02",
-                    message: error,
-                    RESULT: false
-                }
-                res.status(400).json(send_res)
+                next(error)
             }
         } else {
-            logger.error("Payload not compalte")
-            const send_res = {
-                ResponseCode: "CIMBERR01",
-                message: "Payload not compalte",
-                RESULT: false
-            }
-            res.status(400).json(send_res)
+            next(new HttpException(400, `Payload not complete`))
         }
     }
 
-    confirmFunsTransferCIMB = async (req, res) => {
+    confirmFunsTransferCIMB = async (req, res,next) => {
         const arg_keys = [
             'opay_encrypt_key64',
             'opay_encrypt_iv64',
@@ -176,35 +164,18 @@ export class CIMBContoller {
                     }
                     res.status(200).json(result_payload)
                 } else {
-                    logger.error(`Inquiry failed => CilentTransNo : ${result?.ClientTransactionNo} , ${result?.Description}`)
-                    const result_payload = {
-                        RESULT: false,
-                        ...result
-                    }
-                    res.status(200).json(result_payload)
+                    next(new HttpException(400, `Inquiry failed => CilentTransNo : ${result?.ClientTransactionNo} , ${result?.Description}`))
                 }
 
             } catch (error) {
-                logger.error(error)
-                const send_res = {
-                    ResponseCode: "CIMBERR02",
-                    message: error,
-                    RESULT: false
-                }
-                res.status(400).json(send_res)
+                next(error)
             }
         } else {
-            logger.error("Payload not compalte")
-            const send_res = {
-                ResponseCode: "CIMBERR01",
-                message: "Payload not compalte",
-                RESULT: false
-            }
-            res.status(400).json(send_res)
+            next(new HttpException(400, `Payload not complete`))
         }
     }
 
-    getStatusV2CIMB = async (req,res) => {
+    getStatusV2CIMB = async (req,res,next) => {
         const arg_keys = [
             'opay_encrypt_key64',
             'opay_encrypt_iv64',
@@ -255,20 +226,10 @@ export class CIMBContoller {
                 }
     
             } catch (error) {
-                logger.error(error)
-                const send_res = {
-                    ResponseCode: "CIMBERR02",
-                    message: error
-                }
-                res.status(500).json(send_res)
+                next(error)
             }
         } else {
-            logger.error("Payload not compalte")
-            const send_res = {
-                ResponseCode: "CIMBERR01",
-                message: "Payload not compalte"
-            }
-            res.status(500).json(send_res)
+            next(new HttpException(400, `Payload not complete`))
         }
     }
 }
