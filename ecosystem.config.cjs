@@ -12,7 +12,7 @@ module.exports = {
         script: './index.js',
         exec_mode: 'cluster',
         instance_var: 'INSTANCE_ID',
-        instances: 2,
+        instances: 1,
         autorestart: true,
         watch: false,
         ignore_watch: ['node_modules', 'logs'],
