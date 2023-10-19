@@ -1,0 +1,1 @@
+openssl pkcs12 -in thaicoop_co_2023.pfx -clcerts -nokeys -out thaicoop_co_2023.cer
