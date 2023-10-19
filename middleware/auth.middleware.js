@@ -1,4 +1,4 @@
-import { RequestFunction , c_time, genGUID, checkCompleteArgument } from "#Utils/utility.func"
+import { RequestFunction , genGUID, checkCompleteArgument } from "#Utils/utility.func"
 import { SessionManager } from "#Services/redis.service"
 import { CIMBServices } from "#Services/banks.service"
 import { HttpException } from "#Exceptions/HttpException"

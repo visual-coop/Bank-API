@@ -1,5 +1,6 @@
 import { CIMBServices } from "#Services/banks.service"
-import { redisClient ,getAsync , setAsync, setExAsync, delCache } from "#Utils/redisUtils"
+import { redisClient ,getAsync , setAsync, setExAsync, delCache, flushCache } from "#Utils/redisUtils"
+import { logger } from "#Utils/logger"
 
 export class RedisService {
 
@@ -7,6 +8,10 @@ export class RedisService {
 
     initializeCache = async () => {
         if (redisClient.status === 'connect') {
+            if (process.env.NODE_ENV === 'prod') {
+                const result = await flushCache()
+                logger.info(`Clear cache status => ${result}`)
+            }
             await setAsync('INIT_CONFIGS:CIMB',JSON.stringify(await this.cimb.getBankProvide()))
         }
     }
