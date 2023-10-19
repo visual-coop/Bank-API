@@ -62,17 +62,19 @@ export class CIMBContoller {
                     }
                     res.status(200).json(result_payload)
                 } else {
-                    console.log(`[${c_time()}][Inquiry] Failed , CilentTransNo : ${result?.ClientTransactionNo} => ${result?.Description}`)
                     const result_payload = {
                         RESULT: false,
                         ...result
                     }
                     res.status(200).json(result_payload)
+                    throw result?.Description
                 }
             } catch (error) {
+                await this.#session.endSession(req.body.unique_id,this.#bankNameInit)
                 next(error)
             }
         } else {
+            await this.#session.endSession(req.body.unique_id,this.#bankNameInit)
             next(new HttpException(400, `Payload not complete`))
         }
     }
