@@ -59,7 +59,7 @@ class Server {
             rejectUnauthorized: false
         }
         const server = https.createServer(options, this.app)
-        this.app.listen(this.port, () => {
+        server.listen(this.port, () => {
             logger.info(`Server Listening on PORT => ${this.port}`)
             logger.info(`Mode => ${this.#mode === 'dev' ? 'Deverlopment' : 'Production'}`)
         })
