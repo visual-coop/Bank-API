@@ -7,12 +7,17 @@ export class RedisService {
     cimb = new CIMBServices()
 
     initializeCache = async () => {
-        if (redisClient.status === 'connect') {
-            if (process.env.NODE_ENV === 'prod') {
-                const result = await flushCache()
-                logger.info(`Clear cache status => ${result}`)
+        try {
+            if (redisClient.status === 'connect') {
+                if (process.env.NODE_ENV === 'prod') {
+                    const result = await flushCache()
+                    logger.info(`Clear cache status => ${result}`)
+                }
+                await setAsync('INIT_CONFIGS:CIMB',JSON.stringify(await this.cimb.getBankProvide()))
             }
-            await setAsync('INIT_CONFIGS:CIMB',JSON.stringify(await this.cimb.getBankProvide()))
+        } catch (error) {
+            logger.error(`initializeCache error => ${error}`)
+            process.exit(0)
         }
     }
 

@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start-win": "SET NODE_ENV=prod& node ./index.js",
-    "start-unix": "node ./index.js",
+    "start-unix": "export NODE_ENV=prod && node ./index.js",
     "dev-win": "SET NODE_ENV=dev& nodemon --inspect=0.0.0.0 ./index.js",
     "set-env-unix": "export NODE_ENV=dev",
     "dev-unix": "export NODE_ENV=dev && nodemon --inspect=0.0.0.0 ./index.js"
