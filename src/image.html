@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <title>Ainu - Face Qulity Tester</title>
+</head>
+
+<body>
+    <h1>Face Quality</h1>
+    <hr>
+    <form id="uploader-form">
+        <label for="image">Select an image : </label>
+        <input type="file" name="image" id="image" accept=".jpg, .jpeg, .png" required>
+        <input type="submit" value="Submit">
+    </form>
+    <hr>
+    <h1>Result</h1>
+    <pre id="response"></pre>
+    <script>
+        document.getElementById('uploader-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            //formData.append('additionalField', 'additionalValue');
+
+            fetch('18.138.192.87/auth/v1/face/quality', {
+                method: 'POST',
+                //body: formData,
+                referrerPolicy: "unsafe_url" 
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Failed to submit form');
+                    }
+                })
+                .then(data => {
+                    console.log(data);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        });
+    </script>
+</body>
+
+</html>

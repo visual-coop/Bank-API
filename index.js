@@ -10,6 +10,7 @@ import configs from '#constants/configs'
 import { RedisService } from '#Services/redis.service'
 import { InitializeRoute } from '#Routes/initialize.route'
 import { BanksRoute } from '#Routes/banks.route'
+import { AinuRoute } from '#Routes/ainu.route'
 import { getDirName } from '#Utils/helper'
 import { stream , logger } from '#Utils/logger'
 import { ErrorMiddleware } from '#middleware/error.middleware'
@@ -35,13 +36,14 @@ class Server {
         this.app.use(hpp())
         this.app.use(helmet())
         this.app.use(compression())
-        this.app.use(express.json())
-        this.app.use(express.urlencoded({ extended: true }))
+        this.app.use(express.json({ limit : '4mb' }))
+        this.app.use(express.urlencoded({ extended: true,limit : '4mb' }))
     }
 
     #initializeRoutes() {
         this.app.use('/', new InitializeRoute().router)
         this.app.use('/', new BanksRoute().router)
+        this.app.use('/auth', new AinuRoute().router)
     }
 
     #initializeErrorHandling() {

@@ -14,6 +14,10 @@ export const gen_sigma_key = () => {
     return uuid()
 }
 
+export const genUUID = () => {
+    return uuid()
+}
+
 export const genGUID = () => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
     let result = ''
@@ -122,6 +126,18 @@ export const RequestFunction = {
         return await axios.post(url, {
             ...data
         }, { headers, timeout: timeout, httpsAgent: ssl })
+            .then((res) => res)
+            .catch((error) => {
+                if (!!error.response) {
+                    throw new HttpException(error.response.status,error.response.data)
+                } else {
+                    throw new HttpException(408,'Request Timeout')
+                }
+            })
+    },
+    async formData(isToken = false, url, headers, form, { timeout = null, showErr = true, ssl = null }) {
+        if (isToken) headers.Authorization = `${headers.Authorization}`
+        return await axios.post(url, form, { headers, timeout: timeout, httpsAgent: ssl })
             .then((res) => res)
             .catch((error) => {
                 if (!!error.response) {

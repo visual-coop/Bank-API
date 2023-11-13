@@ -4,6 +4,7 @@ import { CIMBServices } from "#Services/banks.service"
 import { HttpException } from "#Exceptions/HttpException"
 import * as kbank from "#Utils/kbank.func"
 import * as cimb from "#Utils/cimb.func"
+import * as ainu from "#Utils/ainu.func"
 import * as endpoint from "#constants/endpoints"
 
 const mode = process.env.NODE_ENV
@@ -91,3 +92,22 @@ export const oAuthV2CIMB = async (req, res, next) => {
     }
 }
 
+export const ainuAuth = async (req, res, next) => {
+    try {
+        const obj = {
+            headers : {
+                'Content-type' : 'application/json'
+            },
+            body : {
+                'grantType' : 'client_credentials',
+                'accountId' : ainu.constants.credentials[mode].accountId,
+                'accountSecret' : ainu.constants.credentials[mode].accountSecret
+            }
+        }
+        const url = endpoint.default.ainu[mode] + endpoint.default.ainu.endpoint.authorization
+        req.headers.Authorization = 'Bearer ' + (await RequestFunction.post(false, url, obj.headers, obj.body , {})).data.accessToken
+        next()
+    } catch (error) {
+        next(new HttpException(401, `Authentication token error ${error}`))
+    }
+}

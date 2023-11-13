@@ -34,5 +34,15 @@ export default {
             confirmFunsTransferV2CIMB : "https://partner.cimbthai.com/capgw/opay/OpayWebAPI/v1/PromptPay/ProxyCredit/RealTime/Confirm",
             getStatusV2CIMB : "https://partner.cimbthai.com/capgw/opay/OpayWebAPI/v1/GetStatus",
         }
+    },
+    ainu : {
+        dev : 'https://uat.nonprod-api.ainu.tech',
+        prod : 'https://api.ainu.tech',
+        endpoint : {
+            authorization : '/v1/auth/token',
+            // Face Recognition APIs
+            faceQuality : '/v1/face/quality',
+            faceCompare : '/v1/face/compare'
+        }
     }
 }

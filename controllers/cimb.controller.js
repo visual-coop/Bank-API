@@ -1,4 +1,4 @@
-import { RequestFunction, c_time, genGUID, checkCompleteArgument, gen_sigma_key, formatMysqlDate, pad_amt } from "#Utils/utility.func"
+import { RequestFunction, genGUID, checkCompleteArgument, gen_sigma_key, formatMysqlDate, pad_amt } from "#Utils/utility.func"
 import { HttpException } from "#Exceptions/HttpException"
 import { SessionManager } from "#Services/redis.service"
 import { CIMBServices } from "#Services/banks.service"

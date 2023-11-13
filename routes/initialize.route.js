@@ -10,7 +10,7 @@ export class InitializeRoute {
     }
 
     #initializeRoutes = () => {
-        this.router.get('*', this.InitializeController.indexPage)
+        this.router.get(process.env.NODE_ENV === 'dev' ? '/' : '/*', this.InitializeController.indexPage)
         this.router.post('/getMode', this.InitializeController.getMode)
     }
 }
