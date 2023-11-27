@@ -44,9 +44,9 @@ export class CIMBContoller {
                         data: cimb.AESencrypt(aesKey, aesIV, JSON.stringify(cimb.buildOPAYRequest(opay_payload)))
                     }
                 }
-
+                
                 const InquiryResult = await RequestFunction.post(true, endpoint.default.cimb[this.#mode].inquiryAccountV2CIMB, obj.headers, obj.body, {})
-
+                
                 const Decrypted = cimb.AESdecrypt(aesKey, aesIV, InquiryResult.data.data)
 
                 const jsonResponse = JSON.parse(Decrypted.toString())
@@ -67,7 +67,6 @@ export class CIMBContoller {
                         ...result
                     }
                     res.status(200).json(result_payload)
-                    throw result?.Description
                 }
             } catch (error) {
                 await this.#session.endSession(req.body.unique_id,this.#bankNameInit)

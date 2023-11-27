@@ -42,7 +42,11 @@ export default {
             authorization : '/v1/auth/token',
             // Face Recognition APIs
             faceQuality : '/v1/face/quality',
-            faceCompare : '/v1/face/compare'
+            faceCompare : '/v1/face/compare',
+            // OCR ThaiID card APIs
+            thaiIDFront : '/v1/ocr/thaicard/front',
+            thaiIDBack : '/v1/ocr/thaicard/back',
+            thaiIDPortrait : '/v1/ocr/thaicard/portrait'
         }
     }
 }

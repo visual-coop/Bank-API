@@ -1,4 +1,4 @@
-import { checkCompleteArgument, c_time, getLastPathSegment } from "#Utils/utility.func"
+import { checkCompleteArgument, getLastPathSegment } from "#Utils/utility.func"
 import { HttpException } from "#Exceptions/HttpException"
 import jwt from "jsonwebtoken"
 import secret_key from '#constants/key'

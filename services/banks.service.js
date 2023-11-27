@@ -18,7 +18,7 @@ export class CIMBServices extends DBConnection {
             opay_encrypt_iv64,
             x_apigw_api_id,
             bu_encode
-            FROM coop_provide_cimb`
+            FROM coop_provide_cimb_v2`
             const result = (await this.mysql.query(query))[0]
             return result
         } catch (error) {
@@ -53,7 +53,9 @@ export class CIMBServices extends DBConnection {
 
     constantsInit = async (coop,bankNameInit) => {
         return (JSON.parse(await RedisService.getinitializeCache(bankNameInit)))
-            .filter(result => result.coop_key === (this.#mode !== 'dev' ? coop : 'uat'))[0]
+            // *** @ 11-15-23 Unavaliable UAT mode ****
+            //.filter(result => result.coop_key === (this.#mode !== 'dev' ? coop : 'uat'))[0]
+            .filter(result => result.coop_key === coop)[0]
     }
 
 }
@@ -95,5 +97,4 @@ export class KBANKService extends DBConnection {
             throw error
         }
     }
-
 }

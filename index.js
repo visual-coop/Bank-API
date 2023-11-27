@@ -36,8 +36,8 @@ class Server {
         this.app.use(hpp())
         this.app.use(helmet())
         this.app.use(compression())
-        this.app.use(express.json({ limit : '4mb' }))
-        this.app.use(express.urlencoded({ extended: true,limit : '4mb' }))
+        this.app.use(express.json({ limit : '12mb' }))
+        this.app.use(express.urlencoded({ extended: true,limit : '12mb' }))
     }
 
     #initializeRoutes() {

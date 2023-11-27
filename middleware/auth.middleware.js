@@ -74,7 +74,7 @@ export const oAuthV2CIMB = async (req, res, next) => {
                         data: cimb.AESencrypt(aesKey, aesIV, body)
                     }
                 }
-                
+
                 const Encrypted = await RequestFunction.post(false, endpoint.default.cimb[mode].oAuthTokenV2CIMB, obj.headers, obj.body , {})
 
                 const Decrypted = cimb.AESdecrypt(aesKey, aesIV, Encrypted.data.data)
@@ -93,6 +93,7 @@ export const oAuthV2CIMB = async (req, res, next) => {
 }
 
 export const ainuAuth = async (req, res, next) => {
+    
     try {
         const obj = {
             headers : {
