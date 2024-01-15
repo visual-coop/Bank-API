@@ -14,6 +14,7 @@ import { AinuRoute } from '#Routes/ainu.route'
 import { getDirName } from '#Utils/helper'
 import { stream , logger } from '#Utils/logger'
 import { ErrorMiddleware } from '#middleware/error.middleware'
+import { DBConnection } from '#Services/dbs.conection'
 
 class Server {
 
@@ -25,7 +26,7 @@ class Server {
         this.port = process.env.PORT || configs.SERVER_PORT
         this.#initializeMiddlewares()
         this.#initializeRoutes()
-        this.#initializeCache()
+        this.#initializeDatabases()
         this.#initializeErrorHandling()
     }
 
@@ -50,7 +51,8 @@ class Server {
         this.app.use(ErrorMiddleware)
     }
 
-    #initializeCache() {
+    #initializeDatabases() {
+        new DBConnection().checkDBConnection(true)
         new RedisService().initializeCache()
     }
 

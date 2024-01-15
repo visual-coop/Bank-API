@@ -2,6 +2,7 @@ import { RequestFunction, genGUID, checkCompleteArgument, gen_sigma_key, formatM
 import { HttpException } from "#Exceptions/HttpException"
 import { SessionManager } from "#Services/redis.service"
 import { CIMBServices } from "#Services/banks.service"
+import { DBConnection } from "#Services/dbs.conection"
 import * as cimb from "#Utils/cimb.func"
 import * as endpoint from "#constants/endpoints"
 
@@ -116,8 +117,13 @@ export class CIMBContoller {
                         data: cimb.AESencrypt(aesKey, aesIV, JSON.stringify(cimb.buildOPAYRequest(opay_payload)))
                     }
                 }
-
-                const ConfirmResult = await RequestFunction.post(true, endpoint.default.cimb[this.#mode].confirmFunsTransferV2CIMB, obj.headers, obj.body, {})
+                
+                let ConfirmResult
+                if (new DBConnection().checkDBConnection()) {
+                    ConfirmResult = await RequestFunction.post(true, endpoint.default.cimb[this.#mode].confirmFunsTransferV2CIMB, obj.headers, obj.body, {})
+                } else {
+                    next(new HttpException(500, `Database connection server error`))
+                }
 
                 const Decrypted = cimb.AESdecrypt(aesKey, aesIV, ConfirmResult.data.data)
 

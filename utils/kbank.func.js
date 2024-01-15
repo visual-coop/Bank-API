@@ -23,8 +23,8 @@ export const constants = {
 const __dirname = getDirName(import.meta.url)
 
 export const httpsAgent = new https.Agent({
-    key: fs.readFileSync(`${__dirname}/../constants/cert/key.pem`),
-    cert: fs.readFileSync(`${__dirname}/../constants/cert/thaicoop_co_2023.crt`),
+    key: fs.readFileSync(`${__dirname}/../constants/cert/thaicoop.co-18Jan2025.pem`),
+    cert: fs.readFileSync(`${__dirname}/../constants/cert/thaicoop.co-18Jan2025.crt`),
     rejectUnauthorized: false
 })
 

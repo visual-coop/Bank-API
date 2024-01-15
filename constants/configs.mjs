@@ -9,10 +9,10 @@ export default {
             password: 'Fs#5132Xcza'
         },
         mysqlPool : {
-            host : "43.229.79.117",
-            port : 3307,
+            host : "172.31.42.156",
+            port : 3306,
             user : "root",
-            password : "@Egat2020",
+            password : "@Gensoft2018",
             database : "api-uat",
             waitForConnections : true,
             connectionLimit : 10,
@@ -27,10 +27,10 @@ export default {
             password: 'Fs#5132Xcza'
         },
         mysqlPool : {
-            host : "43.229.79.117",
-            port : 3307,
+            host : "172.31.42.156",
+            port : 3306,
             user : "root",
-            password : "@Egat2020",
+            password : "@Gensoft2018",
             database : "api",
             waitForConnections : true,
             connectionLimit : 10,

@@ -9,7 +9,7 @@ export const verifyInput = (req, res, next) => {
             jwt.verify(req.body.verify_token, secret_key[req.body.app_id], (error, result) => {
                 if (error) next(new HttpException(401, `Verify input error ${error}`))
                 req.body = result
-                req.body.routePath = getLastPathSegment(req.route.path) 
+                req.body.routePath = getLastPathSegment(req.route.path)
                 next()
             })
         } catch (error) {

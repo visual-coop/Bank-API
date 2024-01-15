@@ -26,5 +26,6 @@ export default {
 	"com.thco.mobile" : "THCOGcoop+-API_LB-WITH-!Bank!-^056001*!&",
 	"com.dms.mobile" : "DMSGcoop+-API_LB-WITH-!Bank!-^078001*!&",
 	"com.aero.mobile" : "AEROGcoop+-API_LB-WITH-!Bank!-^077001*!&",
-	"com.msvsaving.mobile" : "MHDGcoop+-API_LB-WITH-!KBank!-^001001*!&"
+	"com.msvsaving.mobile" : "MHDGcoop+-API_LB-WITH-!KBank!-^001001*!&",
+	"com.gpo.mobile" : "GPOGcoop+-API_LB-WITH-!Bank!-^056001*!&"
 }
