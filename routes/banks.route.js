@@ -17,6 +17,7 @@ export class BanksRoute {
     #kbankRoutes = () => {
         this.router.post('/kbank/transfer/v2/verifyData', verifyInput , oAuthV2KBNAK, this.kbank.verifyData)
         this.router.post('/kbank/transfer/v2/fundtransfer', verifyInput , this.kbank.fundtransfer)
+        this.router.post('/kbank/transfer/v2/reconcile' , this.kbank.reconcile)
     }
 
     #cimbRoutes = () => {

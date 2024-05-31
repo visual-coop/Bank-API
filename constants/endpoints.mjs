@@ -16,9 +16,9 @@ export default {
         },
         prod: {
             oAuthV2: "https://openapi.kasikornbank.com/v2/oauth/token",
-            verifyData: "https://openapi.kasikornbank.com/fundtransfer/verifydata",
-            fundTransfer: "https://openapi.kasikornbank.com/fundtransfer/fundtransfer",
-            inqueryTxnStatus: "https://openapi.kasikornbank.com/fundtransfer/inqtxnstatus"
+            verifyData: "https://openapi.kasikornbank.com/v1/fundtransfer/verifydata",
+            fundTransfer: "https://openapi.kasikornbank.com/v1/fundtransfer/fundtransfer",
+            inqueryTxnStatus: "https://openapi.kasikornbank.com/v1/fundtransfer/inqtxnstatus"
         }
     },
     cimb : {
