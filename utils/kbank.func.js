@@ -16,6 +16,10 @@ export const constants = {
         dev: {
             consumer_id: "NcS1V4JDPaFF5OF0xuCqhpY8jaoK9nnt",
             consumer_secret: "NXGYd1iG2j7vlLNe"
+        },
+        prod: {
+            consumer_id: "tqUqSCpPnifnmGxCPfRfH8Jx6y9EdZhk",
+            consumer_secret: "lzDJbYwTvgWjYnWY"
         }
     }
 }
@@ -24,7 +28,7 @@ const __dirname = getDirName(import.meta.url)
 
 export const httpsAgent = new https.Agent({
     key: fs.readFileSync(`${__dirname}/../constants/cert/key.pem`),
-    cert: fs.readFileSync(`${__dirname}/../constants/cert/thaicoop_co_2023.crt`),
+    cert: fs.readFileSync(`${__dirname}/../constants/cert/thaicoop.co-18Jan2025.crt`),
     rejectUnauthorized: false
 })
 

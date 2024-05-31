@@ -4,6 +4,7 @@ import { KBANKService } from "#Services/banks.service"
 import * as kbank from "#Utils/kbank.func"
 import * as endpoint from "#constants/endpoints"
 import moment from "moment"
+import { DBConnection } from "#Services/dbs.conection"
 
 export class KBANKController {
 
@@ -41,7 +42,7 @@ export class KBANKController {
                     typeOfSender: "K"
                 }
             }
-
+            
             const result = await RequestFunction.post(true, endpoint.default.kbank[this.#mode].verifyData, obj.headers, obj.body, { ssl: kbank.httpsAgent })
 
             if (result.data.responseCode === '0000') {
@@ -64,6 +65,7 @@ export class KBANKController {
             }
 
         } catch (error) {
+            console.log(JSON.stringify(error))
             next(error)
         }
     }
@@ -109,9 +111,15 @@ export class KBANKController {
                     log_response: result.data
                 }
 
-                await this.#service.transLog(db_log_payload)
+                if (new DBConnection().checkDBConnection()) {
+                    await this.#service.transLog(db_log_payload)
+                    await this.#session.endSession(req.body.unique_key,this.#bankNameInit)
+                    res.status(200).json(payload_verify_result)
+                    
+                } else {
+                    next(new HttpException(500, `Database connection server error`))
+                }
 
-                res.status(200).json(payload_verify_result)
             } else {
                 obj.body = {
                     merchantID: merchantID,
@@ -136,13 +144,27 @@ export class KBANKController {
                     log_response: Txn_result.data
                 }
 
-                await this.#service.transLog(db_log_payload)
+                if (new DBConnection().checkDBConnection()) {
+                    await this.#service.transLog(db_log_payload)
+                    await this.#session.endSession(req.body.unique_key,this.#bankNameInit)
+                    res.status(200).json(payload_verify_result)
+                } else {
+                    next(new HttpException(500, `Database connection server error`))
+                }
+            }        
+        } catch (error) {
+            next(error)
+        }
+    }
 
-                res.status(200).json(payload_Txn_result)
-            }
-
-            await this.#session.endSession(req.body.unique_key,this.#bankNameInit)
-
+    reconcile = async (req,res,next) => {
+        try { 
+            const sftp = await new DBConnection().Sftp()
+            console.log(`SFTP Connected on ${sftp.client.config.host} =>`)
+            console.log(sftp.client.config)
+            console.log(`Directory =>`)
+            console.log((await sftp.list('./AERO_NBGW_OUTBOUND'))[1])
+            res.status(200).end()
         } catch (error) {
             next(error)
         }
