@@ -1,0 +1,10 @@
+# baseURL
+@baseURL = https://localhost:10003
+
+###
+
+# User Login
+
+POST {{ baseURL }}/kbank/transfer/v2/reconcile
+Content-Type: application/json
+
